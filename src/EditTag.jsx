@@ -16,7 +16,7 @@ const EditTag = ({clearDataCallback, refreshData, tag}) => {
       })
 
       const resp_data = await resp.json()
-      console.log(resp_data)
+      //console.log(resp_data)
       clearDataCallback()
       refreshData()
       toast.success("Tag Updated!",{position: "top-center", duration: 1000, style: {background: '#333', color: '#fff'}})
@@ -35,7 +35,7 @@ const EditTag = ({clearDataCallback, refreshData, tag}) => {
 
           <div className='col-span-8'>
             <div className='flex flex-row justify-center content-start'>
-              <button className=' bg-neutral-500 hover:bg-neutral-700 hover:text-gray-300 rounded-md p-2'  onClick={clearDataCallback}>Cancel</button> 
+              <button className=' bg-red-100 hover:bg-red-400 hover:text-gray-300 rounded-md p-2'  onClick={clearDataCallback}>Cancel</button> 
               <button className='bg-gray-300 p-2 ml-2 rounded-md hover:bg-gray-500 hover:text-gray-300'>Update</button>
               </div>
           </div>

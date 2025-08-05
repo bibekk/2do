@@ -5,8 +5,10 @@ import AddTag from "./AddTag"
 import { FaEdit } from "react-icons/fa"
 import toast from "react-hot-toast"
 import EditTag from "./EditTag"
+//import _ from 'lodash'
 
-const TagManager = ({reload}) => {
+
+const TagManager = ({reload, taskstags}) => {
   const [tags, setTags] = useState([])
   const [refreshdata, setRefreshData] = useState(true)
   const [showAddTag, setShowAddTag] = useState(false)
@@ -45,17 +47,20 @@ const TagManager = ({reload}) => {
     getTags()
   },[refreshdata])
   
+  //const taggrp= _.groupBy(taskstags,'tag_id')
+
   return (
     <>
       <div className='w-full  bg-gradient-to-r from-gray-500 to-white rounded-md p-1 text-gray-100'>Tags
         <MdAddCircle className='text-2xl float-right text-gray-500 hover:text-gray-800 hover:cursor-pointer' title='New Tag' onClick={()=> setShowAddTag(true)} />
       </div>
 
-      <div className='tag tagall'>All</div>
+      <div className='tag tagall -mt-1'>All</div>
       {tags.map((m,i) => {
           return(
-          <div className='tag flex gap-1' key={i}>{m.tag}
-            <div className="flex gap-1 mt-1 ml-2">
+          <div className='tag flex -mt-1' key={i}>{m.tag}
+          ({taskstags.filter(f=> f.tag_id === m.tag_id).length})
+            <div className="flex gap-1 mt-1  ml-2">
               <FaEdit className='text-gray-600 hover:text-gray-900 hover:cursor-pointer text-xs' onClick={()=>setShowEditTag({show: true, tag: m})} />
               <MdDelete className='text-red-400 text-sm hover:text-red-700 hover:cursor-pointer' onClick={()=>{if(window.confirm('Are you sure you want to delete?')) {deleteTag(m.tag_id)}}}/>
             </div>

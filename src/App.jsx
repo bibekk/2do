@@ -1,19 +1,20 @@
 import { useEffect, useState } from 'react'
 import 'react-calendar/dist/Calendar.css';
 import Calendar from 'react-calendar'
-import { MdDelete, MdPushPin } from 'react-icons/md';
+import { MdDelete } from 'react-icons/md';
 import { FaCircle, FaEdit } from 'react-icons/fa';
 import AddTask from './AddTask';
 import { base_url } from './Util';
 import { FaCircleCheck } from 'react-icons/fa6';
 import { Header } from './Header';
-import toast from 'react-hot-toast';
-
-import dayjs from 'dayjs';
-//import AddTag from './AddTag';
 import TagManager from './TagManager';
 import Stat from './Stat';
 import EditTask from './EditTask';
+import Months from './Months';
+import Weeks from './Weeks';
+
+import toast from 'react-hot-toast';
+import dayjs from 'dayjs';
 
 function App() {
   const [showAddTask, setShowAddTask] = useState(false)
@@ -23,8 +24,8 @@ function App() {
   const [tasks, setTasks] = useState([])
   const [taskstags, setTasksTags] = useState([])
   const [refreshdata, setRefreshData] = useState(true)
+  const [showAllTasks, setShowAllTasks] = useState(false)
 
-  const [showTag, setShowTag] =useState(false)
 
   const getTags = async ()=>{
     try {
@@ -118,24 +119,72 @@ function App() {
     }
   }
 
-  //tests
-  // console.log(new Date().toLocaleDateString())
-  // console.log(tasks.filter(f=> new Date(f.duedate).toLocaleDateString() === new Date().toLocaleDateString()))
-  //const a = dayjs()
-  //console.log(a.add(7,'day'))
-  //console.log(dayjs().add(1,'day'))
-  //console.log(first)
-
   return (
     <div className='min-h-screen'>
       
-      <Header showAddTask={()=>setShowAddTask(true)} />
+      <Header showAddTask={()=>setShowAddTask(true)}  taskstags={taskstags} setShowEditTask={setShowEditTask} deleteTask={deleteTask} completeTask={completeTask} />
       
-      <div className='grid grid-cols-3 gap-1  bg-gray-600 p-1'>
+      <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-1  bg-gray-600 p-1'>
         
-        <div className='flex flex-col gap-1 items-start'>    
+        <div className='flex flex-col  justify-start gap-1'>       
+          <div  className='grow p-1 bg-gray-400 rounded-lg'>
+            <div className='w-full bg-gradient-to-r from-gray-500 to-white rounded-md p-1 mb-2 text-gray-100'>Due 5 Days</div> 
+            {/* <select id='no_of_days' onChange={}>
+              {[1,2,3,4,6,6,7,8].map((m)=>{
+                return(
+                  <option key={m}>{m}</option>
+                )
+              })}
+            </select>        */}
+            <div className='flex flex-col gap-2 mx-2'>
+              {[0,1,2,3,4].map(_day => {
+                return(
+                  <div key={_day} className='space-y-1 bg-gray-500 rounded-lg p-2 max-w-lg'>     
+                    <span className='task-date'>{`${dayjs().add(_day,'day').format('MMM D,YYYY')}`}</span>
+                    {_day === 0 ? <span className='bg-green-200 p-1 text-xs ml-2 rounded-md font-bold'>Today</span>:null}
+                    {tasks.filter(f=> new Date(f.duedate).toDateString() === new Date(`${dayjs().add(_day,'day')}`).toDateString() && f.completed === 0).map((m,i) => {
+                      return(
+                        <div className={`task ${m.completed === 1 ?'bg-green-100!':null}`} key={m.task_id}>
+                          <div className='flex justify-between'>               
+                            <span  className='flex' onClick={()=>completeTask(m.completed, m.task_id)}>
+                              {m.completed === 1? <FaCircleCheck className=' mr-2 mt-1 text-green-500 hover:text-blue-500 hover:cursor-pointer'/>:<FaCircle className='float-left mr-2 mt-1 text-white hover: cursor-pointer hover:text-blue-500' />}
+                              <span className={m.completed?'line-through italic p-1':null}>{m.task_title}</span>
+                            </span>
+                            <span className='text-xs p-1 '>{m.duedate}</span>
+                            <div className='flex gap-0.5 mt-1'>
+                              <FaEdit className='text-gray-600 hover:text-gray-900 hover:cursor-pointer' onClick={()=>setShowEditTask({show: true, task: m})} />
+                              <MdDelete className='text-red-400 hover:text-red-700 hover:cursor-pointer' onClick={()=>{if(window.confirm('Are you sure you want to delete?')) {deleteTask(m.task_id)}}}/>
+                              {/* <MdPushPin className='text-blue-500 hover:cursor-pointer hover:text-blue-600'/> */}
+                            </div>
+                          </div>
+
+                          <div className='flex mt-2 border-t-gray-300 border-1 border-b-0 border-l-0 border-r-0 pt-1 flex-wrap'>
+                            {taskstags.filter(f=> f.task_id ===m.task_id).map(item => <div key={item.tag_id} className='task-tag'>{item.tag}</div>)}
+                          </div>
+                        </div>
+                      )
+                    })}
+
+                    {tasks.filter(f=> new Date(f.duedate).toDateString() === new Date(`${dayjs().add(_day,'day')}`).toDateString() && f.completed === 0).length === 0 ? <div className='message'>No tasks due!</div>:null}
+
+                  </div>
+                )}
+              )}
+            </div>
+          </div>
+        </div>
+
+        <div className='flex flex-col  justify-start gap-1'>
+          <Weeks tasks={tasks} taskstags={taskstags} setShowEditTask={setShowEditTask} deleteTask={deleteTask} completeTask={completeTask} />  
+        </div>
+
+        <div className='flex flex-col  justify-start gap-1'>
+          <Months tasks={tasks} taskstags={taskstags} setShowEditTask={setShowEditTask} deleteTask={deleteTask} completeTask={completeTask}/>  
+        </div>
+
+        <div className='flex flex-col gap-1 items-start'>  
           <div className='bg-gray-400 rounded-lg p-1 w-full flex gap-2 flex-wrap'>
-            <TagManager reload={()=>setRefreshData(!refreshdata)} />
+            <TagManager reload={()=>setRefreshData(!refreshdata)} taskstags={taskstags} />
           </div>
 
           <div className=' bg-gray-400 p-1 rounded-md w-full'>
@@ -147,184 +196,18 @@ function App() {
 
             <Calendar minDate={new Date()}  onChange={onChange} value={value} className='rounded-md p-1 w-full' defaultView='month' tileContent={tileContent} calendarType='gregory'  />
           </div>
-        </div>
-        
-        <div className='flex flex-col  justify-start gap-1'>
-          <div className='p-1 bg-gray-400 rounded-lg'>
-            <div className='w-full bg-gradient-to-r from-gray-500 to-white rounded-md p-1 mb-2 text-gray-100'>Due Today</div>
-          
-            <div className='flex flex-col gap-2 mx-2'>
-              <div className='space-y-1 bg-gray-500 rounded-lg p-2 max-w-lg'>
-                <span className='text-xs text-gray-700  font-bold border-1 border-blue-300 -ml-1.5 rounded-r-xl p-1 bg-gray-100'>{dayjs().format('MMM D,YYYY')}</span>
-              
-                {tasks.filter(f=> new Date(f.duedate).toLocaleDateString() === new Date().toLocaleDateString()).map((m,i) => {
-                  return(
-                    <div className={`task ${m.completed === 1 ?'bg-green-100!':null}`} key={m.task_id}>
-                      <div className='flex justify-between'>               
-                        <span  className='flex' onClick={()=>completeTask(m.completed, m.task_id)}>
-                          {m.completed === 1? <FaCircleCheck className=' mr-2 mt-1 text-green-500 hover:text-blue-500 hover:cursor-pointer'/>:<FaCircle className='float-left mr-2 mt-1 text-white hover: cursor-pointer hover:text-blue-500' />}
-                          <span className={m.completed?'line-through italic p-1':null}>{m.task_title}</span>
-                        </span>
-                        {/* <span className='text-xs p-1'>{m.duedate}</span> */}
-                        <div className='flex gap-0.5 mt-1'>
-                          <FaEdit className='text-gray-600 hover:text-gray-900 hover:cursor-pointer' onClick={()=>setShowEditTask({show: true, task: m})} />
-                          <MdDelete className='text-red-400 hover:text-red-700 hover:cursor-pointer' onClick={()=>{if(window.confirm('Are you sure you want to delete?')) {deleteTask(m.task_id)}}}/>
-                          {/* <MdPushPin className='text-blue-500 hover:cursor-pointer hover:text-blue-600'/> */}
-                        </div>
-                      </div>
 
-                      <div className='flex mt-2 border-t-gray-300 border-1 border-b-0 border-l-0 border-r-0 pt-1 flex-wrap'>
-                        {taskstags.filter(f=> f.task_id ===m.task_id).map(item => <div key={item.tag_id} className='w-auto border-1 mt-1 shadow-sm border-gray-400 text-xs bg-gray-300 p-0.5 ml-1 rounded-sm text-blue-600'>{item.tag}</div>)}
-                      </div>
-                    </div>
-                  )
-                })}
-                {tasks.filter(f=> new Date(f.duedate).toLocaleDateString() === new Date().toLocaleDateString()).length === 0 ? <div className='message'>No due today!</div>:null}
-
-              </div>
-            </div>
-          </div>
-
-          <div className='p-1 bg-gray-400 rounded-lg'>
-            <div className='w-full bg-gradient-to-r from-gray-500 to-white rounded-md p-1 mb-2 text-gray-100'>Due Tomorrow</div>        
-            <div className='flex flex-col gap-2 mx-2'>
-              <div className='space-y-1 bg-gray-500 rounded-lg p-2 max-w-lg'>
-                
-                <span className='text-xs text-gray-700  font-bold border-1 border-blue-300 -ml-1.5 rounded-r-xl p-1 bg-gray-100'>{`${dayjs().add(1,'day').format('MMM D,YYYY')}`}</span>
-                {tasks.filter(f=> new Date(f.duedate).toDateString() === new Date(`${dayjs().add(1,'day')}`).toDateString()).map((m,i) => {
-                  return(
-                    <div className={`task ${m.completed === 1 ?'bg-green-100!':null}`} key={m.task_id}>
-                      <div className='flex justify-between'>               
-                        <span  className='flex' onClick={()=>completeTask(m.completed, m.task_id)}>
-                          {m.completed === 1? <FaCircleCheck className=' mr-2 mt-1 text-green-500 hover:text-blue-500 hover:cursor-pointer'/>:<FaCircle className='float-left mr-2 mt-1 text-white hover: cursor-pointer hover:text-blue-500' />}
-                          <span className={m.completed?'line-through italic p-1':null}>{m.task_title}</span>
-                        </span>
-                        {/* <span className='text-xs p-1'>{m.duedate}</span> */}
-                        <div className='flex gap-0.5 mt-1'>
-                          <FaEdit className='text-gray-600 hover:text-gray-900 hover:cursor-pointer' onClick={()=>setShowEditTask({show: true, task: m})} />
-                          <MdDelete className='text-red-400 hover:text-red-700 hover:cursor-pointer' onClick={()=>{if(window.confirm('Are you sure you want to delete?')) {deleteTask(m.task_id)}}}/>
-                          {/* <MdPushPin className='text-blue-500 hover:cursor-pointer hover:text-blue-600'/> */}
-                        </div>
-                      </div>
-
-                      <div className='flex mt-2 border-t-gray-300 border-1 border-b-0 border-l-0 border-r-0 pt-1 flex-wrap'>
-                        {taskstags.filter(f=> f.task_id ===m.task_id).map(item => <div key={item.tag_id} className='w-auto border-1 mt-1 shadow-sm border-gray-400 text-xs bg-gray-300 p-0.5 ml-1 rounded-sm text-blue-600'>{item.tag}</div>)}
-                      </div>
-                    </div>
-                  )
-                })}
-
-                {tasks.filter(f=> new Date(f.duedate).toDateString() === new Date(`${dayjs().add(1,'day')}`).toDateString()).length === 0 ? <div className='message'>No due tasks!</div>:null}
-
-              </div>
-            </div>
-          </div>
-
-          <div className='p-1 bg-gray-400 rounded-lg'>
-            <div className='w-full bg-gradient-to-r from-gray-500 to-white rounded-md p-1 mb-2 text-gray-100'>Past Due</div>        
-            <div className='flex flex-col gap-2 mx-2'>
-              <div className='space-y-1 bg-gray-500 rounded-lg p-2 max-w-lg'>
-                
-                {/* <span className='text-sm text-gray-300'>{new Date(`${dayjs().add(1,'day')}`).toDateString()}</span> */}
-                {tasks.filter(f=> f.completed === 0 && new Date(f.duedate) < new Date(new Date().toLocaleDateString())).map((m,i) => {
-                  return(
-                    <div className={`task task-pastdue ${m.completed === 1 ?'bg-green-100!':null}`} key={m.task_id}>
-                      <div className='flex justify-around'>               
-                        <span  className='flex' onClick={()=>completeTask(m.completed, m.task_id)}>
-                          {m.completed === 1? <FaCircleCheck className=' mr-2 mt-1 text-green-500 hover:text-blue-500 hover:cursor-pointer'/>:<FaCircle className='float-left mr-2 mt-1 text-white hover: cursor-pointer hover:text-blue-500' />}
-                          <span className={m.completed?'line-through italic p-1':null}>{m.task_title}</span>
-                        </span>
-                        <span className='text-xs p-1 font-bold'>{m.duedate}</span>
-                        <div className='flex gap-0.5 mt-1'>
-                          <FaEdit className='text-gray-600 hover:text-gray-900 hover:cursor-pointer' onClick={()=>setShowEditTask({show: true, task: m})} />
-                          <MdDelete className='text-red-400 hover:text-red-700 hover:cursor-pointer' onClick={()=>{if(window.confirm('Are you sure you want to delete?')) {deleteTask(m.task_id)}}}/>
-                          {/* <MdPushPin className='text-blue-500 hover:cursor-pointer hover:text-blue-600'/> */}
-                        </div>
-                      </div>
-
-                      <div className='flex mt-2 border-t-gray-400 border-1 border-b-0 border-l-0 border-r-0 pt-1 flex-wrap'>
-                        {taskstags.filter(f=> f.task_id ===m.task_id).map(item => <div key={item.tag_id} className='w-auto border-1 mt-1 shadow-sm border-gray-400 text-xs bg-gray-300 p-0.5 ml-1 rounded-sm text-blue-600'>{item.tag}</div>)}
-                      </div>
-                    </div>
-                  )
-                })}
-
-                {tasks.filter(f=> f.completed === 0 && new Date(f.duedate) < new Date(new Date().toLocaleDateString())).length === 0 ? <div className='message'>No past due tasks!</div>:null}
-
-              </div>
-            </div>
-          </div>
-        </div>
-      
-        {/* <div className='p-1 bg-gray-400 rounded-lg'>
-          <div className='w-full bg-gradient-to-r from-gray-500 to-white rounded-md p-1 mb-2 text-gray-100'>Monthly</div>
-
-        
-          <div className='flex flex-col gap-2 mx-2'>
-            <div className='space-y-1 bg-gray-500 rounded-lg p-2 max-w-lg'>
-              <span className='text-sm'>Week 1</span>
-              <div className='task'>
-                <div className='flex justify-between'>
-                  <span>task1.1</span>
-                  <div className='flex gap-1'>
-                    <FaEdit className='text-gray-600 hover:text-gray-700 hover:cursor-pointer' onClick={()=>alert('test')} />
-                    <MdDelete className='text-red-400 hover:text-red-700 hover:cursor-pointer'/>
-                    <MdPushPin className='text-blue-500 hover:cursor-pointer hover:text-blue-600'/>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div> */}
-
-          <div className='p-1 bg-gray-400 rounded-lg'>
-            <div className='w-full bg-gradient-to-r from-gray-500 to-white rounded-md p-1 mb-2 text-gray-100'>All</div>
-            <div className='p-1 ml-2 flex justify-start'>
-              <input type='checkbox' id='show_tag' value='Show Tag' className='h-4 mt-1.5' onClick={()=>setShowTag(!showTag)}/>
-              <label htmlFor='show_tag' className='p-1 text-sm'>{showTag?'Hide Tags':'Show Tags'}</label>
-            </div>
-        
-            <div className='flex flex-col gap-2 mx-2'>
-              <div className='space-y-1 bg-gray-500 rounded-lg p-2 max-w-lg'>
-                
-                {tasks.map((m,i) => {
-                  return(
-                    <div className={`task ${m.completed === 1 ?'bg-green-100!':null}`} key={m.task_id}>
-                      <div className='flex justify-between'>               
-                        <span  className='flex' onClick={()=>completeTask(m.completed, m.task_id)}>
-                          {m.completed === 1? <FaCircleCheck className=' mr-2 mt-1 text-green-500 hover:text-blue-500 hover:cursor-pointer'/>:<FaCircle className='float-left mr-2 mt-1 text-white hover: cursor-pointer hover:text-blue-500' />}
-                          <span className={m.completed?'line-through italic p-1':null}>{m.task_title}</span>
-                        </span>
-                        {/* <span className='text-xs p-1'>{m.duedate}</span> */}
-                        <div className='flex gap-0.5 mt-1'>
-                          <FaEdit className='text-gray-600 hover:text-gray-900 hover:cursor-pointer' onClick={()=>setShowEditTask({show: true, task: m})} />
-                          <MdDelete className='text-red-400 hover:text-red-700 hover:cursor-pointer' onClick={()=>{if(window.confirm('Are you sure you want to delete?')) {deleteTask(m.task_id)}}}/>
-                          {/* <MdPushPin className='text-blue-500 hover:cursor-pointer hover:text-blue-600'/> */}
-                        </div>
-                      </div>
-
-                      {showTag &&
-                        <div className='flex mt-2 border-t-gray-300 border-1 border-b-0 border-l-0 border-r-0 pt-1 flex-wrap'>
-                        {taskstags.filter(f=> f.task_id ===m.task_id).map(item => <div key={item.tag_id} className='w-auto border-1 mt-1 shadow-sm border-gray-400 text-xs bg-gray-300 p-0.5 ml-1 rounded-sm text-blue-600'>{item.tag}</div>)}
-                        </div>
-                      }
-                    </div>
-                  )
-                })}
-              </div>
-            </div>
         </div>
 
       </div>
 
-      {showAddTask && 
+      { showAddTask && 
         <AddTask clearDataCallback={()=> setShowAddTask(false)} tags={tags} reload={()=>setRefreshData(!refreshdata)} />
       }
 
-      {showEditTask.show && 
+      { showEditTask.show && 
         <EditTask clearDataCallback={()=> setShowEditTask({show: false, task :null})} task={showEditTask.task} tags={tags} taskstags={taskstags} reload={()=>setRefreshData(!refreshdata)} />
       }
-  
     </div>
   )
 }

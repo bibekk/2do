@@ -15,8 +15,17 @@ button{
 .task-pastdue{
   @apply bg-orange-200
 }
+
+.task-date{
+  @apply text-xs text-gray-700  border-1  -ml-1.5 rounded-r-xl p-0.5 bg-gray-100
+}
+
+.task-tag{
+  @apply w-auto border-1 mt-1 shadow-sm border-gray-400 text-xs bg-gray-300 p-0.5 ml-1 rounded-sm
+}
+
 .tag{
-  @apply border-2 border-gray-500 rounded-md p-1 shadow bg-gray-300 font-thin text-sm
+  @apply border-2 border-gray-500 rounded-md p-1 shadow bg-gray-300 font-thin text-xs
 }
 
 .tagall{
@@ -39,7 +48,7 @@ button{
 }
 
 .react-calendar__tile{
-  @apply bg-cyan-200!  border-1! border-gray-400! 
+  @apply bg-sky-200!  border-1! border-gray-400! 
 }
 
 .react-calendar__tile div{
