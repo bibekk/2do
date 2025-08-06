@@ -34,6 +34,7 @@ export const AllTasks = ({ taskstags, setShowEditTask, deleteTask, completeTask}
     _tasks = _tasks.filter(f => f.completed === 0 )
   }
 
+  _tasks = _.orderBy(_tasks,'duedate')
 
   //console.log(_tasks)
   //console.log(selectedTagID)
