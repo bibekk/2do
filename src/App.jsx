@@ -15,6 +15,8 @@ import Weeks from './Weeks';
 
 import toast from 'react-hot-toast';
 import dayjs from 'dayjs';
+import { RiExpandDiagonal2Line } from 'react-icons/ri';
+import { GiContract } from 'react-icons/gi';
 
 function App() {
   const [showAddTask, setShowAddTask] = useState(false)
@@ -24,7 +26,9 @@ function App() {
   const [tasks, setTasks] = useState([])
   const [taskstags, setTasksTags] = useState([])
   const [refreshdata, setRefreshData] = useState(true)
-  const [showAllTasks, setShowAllTasks] = useState(false)
+  const [expanded, setExpanded] = useState([9999999])
+  const [showTag, setShowTag] =useState(false)
+
 
 
   const getTags = async ()=>{
@@ -119,6 +123,17 @@ function App() {
     }
   }
 
+  let countDays = 0 
+  let b = [0,1,2,3,4]
+  b.map(_day => {
+    if(tasks.filter(f=> new Date(f.duedate).toDateString() === new Date(`${dayjs().add(_day,'day')}`).toDateString() && f.completed === 0).length > 0){
+      countDays= 1
+    }
+  })
+
+ // console.log(showTag)
+  //console.log(expanded)
+
   return (
     <div className='min-h-screen'>
       
@@ -127,7 +142,7 @@ function App() {
       <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-1  bg-gray-600 p-1'>
         
         <div className='flex flex-col  justify-start gap-1'>       
-          <div  className='grow p-1 bg-gray-400 rounded-lg'>
+          <div  className='grow  p-1 bg-gray-400 rounded-lg'>
             <div className='w-full bg-gradient-to-r from-gray-500 to-white rounded-md p-1 mb-2 text-gray-100'>Due 5 Days</div> 
             {/* <select id='no_of_days' onChange={}>
               {[1,2,3,4,6,6,7,8].map((m)=>{
@@ -139,6 +154,7 @@ function App() {
             <div className='flex flex-col gap-2 mx-2'>
               {[0,1,2,3,4].map(_day => {
                 return(
+                  tasks.filter(f=> new Date(f.duedate).toDateString() === new Date(`${dayjs().add(_day,'day')}`).toDateString() && f.completed === 0).length > 0 &&
                   <div key={_day} className='space-y-1 bg-gray-500 rounded-lg p-2 max-w-lg'>     
                     <span className='task-date'>{`${dayjs().add(_day,'day').format('MMM D,YYYY')}`}</span>
                     {_day === 0 ? <span className='bg-green-200 p-1 text-xs ml-2 rounded-md font-bold'>Today</span>:null}
@@ -146,8 +162,8 @@ function App() {
                       return(
                         <div className={`task ${m.completed === 1 ?'bg-green-100!':null}`} key={m.task_id}>
                           <div className='flex justify-between'>               
-                            <span  className='flex' onClick={()=>completeTask(m.completed, m.task_id)}>
-                              {m.completed === 1? <FaCircleCheck className=' mr-2 mt-1 text-green-500 hover:text-blue-500 hover:cursor-pointer'/>:<FaCircle className='float-left mr-2 mt-1 text-white hover: cursor-pointer hover:text-blue-500' />}
+                            <span  className='flex'>
+                              {m.completed === 1? <FaCircleCheck className=' mr-2 mt-1 text-green-500 hover:text-blue-500 hover:cursor-pointer'/>:<FaCircle className='float-left mr-2 mt-1 text-white hover: cursor-pointer hover:text-blue-500' onClick={()=>completeTask(m.completed, m.task_id)} />}
                               <span className={m.completed?'line-through italic p-1':null}>{m.task_title}</span>
                             </span>
                             <span className='text-xs p-1 '>{m.duedate}</span>
@@ -158,33 +174,50 @@ function App() {
                             </div>
                           </div>
 
-                          <div className='flex mt-2 border-t-gray-300 border-1 border-b-0 border-l-0 border-r-0 pt-1 flex-wrap'>
-                            {taskstags.filter(f=> f.task_id ===m.task_id).map(item => <div key={item.tag_id} className='task-tag'>{item.tag}</div>)}
+                          { expanded.indexOf(m.task_id) > 0 &&
+                            <div className='bg-gray-300 rounded-md p-1'>{m.note}</div>
+                          }
+
+                          {showTag &&
+                            <div className='flex mt-2 border-t-gray-300 border-1 border-b-0 border-l-0 border-r-0 pt-1 flex-wrap'>
+                              {taskstags.filter(f=> f.task_id ===m.task_id).map(item => <div key={item.tag_id} className='task-tag'>{item.tag}</div>)}
+                            </div>
+                          }
+                          <div className='flex place-content-end m-0.5'>
+                          { expanded.indexOf(m.task_id) === -1 &&
+                            <RiExpandDiagonal2Line className='hover:text-blue-400 hover:cursor-pointer' onClick={()=>setExpanded([...expanded,m.task_id])}/>
+                          }
+                          { expanded.indexOf(m.task_id) > 0 &&
+                              <GiContract className=' hover:text-blue-400 hover:cursor-pointer' onClick={()=>setExpanded(expanded.filter(f=> f !== m.task_id))}/>
+                          }
                           </div>
                         </div>
                       )
                     })}
 
                     {tasks.filter(f=> new Date(f.duedate).toDateString() === new Date(`${dayjs().add(_day,'day')}`).toDateString() && f.completed === 0).length === 0 ? <div className='message'>No tasks due!</div>:null}
-
                   </div>
                 )}
               )}
             </div>
+            {
+              countDays === 0 &&
+              <div className='message mb-2'>No tasks due!</div>
+            }
           </div>
         </div>
 
         <div className='flex flex-col  justify-start gap-1'>
-          <Weeks tasks={tasks} taskstags={taskstags} setShowEditTask={setShowEditTask} deleteTask={deleteTask} completeTask={completeTask} />  
+          <Weeks tasks={tasks} taskstags={taskstags} setShowEditTask={setShowEditTask} deleteTask={deleteTask} completeTask={completeTask} showTag={showTag} />  
         </div>
 
         <div className='flex flex-col  justify-start gap-1'>
-          <Months tasks={tasks} taskstags={taskstags} setShowEditTask={setShowEditTask} deleteTask={deleteTask} completeTask={completeTask}/>  
+          <Months tasks={tasks} taskstags={taskstags} setShowEditTask={setShowEditTask} deleteTask={deleteTask} completeTask={completeTask} showTag={showTag}/>  
         </div>
 
         <div className='flex flex-col gap-1 items-start'>  
           <div className='bg-gray-400 rounded-lg p-1 w-full flex gap-2 flex-wrap'>
-            <TagManager reload={()=>setRefreshData(!refreshdata)} taskstags={taskstags} />
+            <TagManager reload={()=>setRefreshData(!refreshdata)} taskstags={taskstags} setShowTag={setShowTag} showTag={showTag} />
           </div>
 
           <div className=' bg-gray-400 p-1 rounded-md w-full'>

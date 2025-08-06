@@ -41,7 +41,7 @@ export default function AddTask({clearDataCallback, tags, reload}) {
       })
 
       const resp_data = await resp.json()
-      console.log(resp_data)
+      //console.log(resp_data)
       clearDataCallback()
       toast.success("Task Added!",{position: "top-center", duration: 1000, style: {background: '#333', color: '#fff'}})
       reload()

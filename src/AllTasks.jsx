@@ -49,18 +49,18 @@ export const AllTasks = ({ taskstags, setShowEditTask, deleteTask, completeTask}
         
         <div className='p-1 ml-2 flex justify-start mt-1 mb-1'>
 
-          <div className="bg-gray-100 rounded-md p-0.5 flex font-thin">
+          <div className="bg-gray-100 rounded-md p-0.5 pl-1 flex font-thin">
             <input type='radio' id='show_pastdue' name='porc' value='Show Past' className='h-4 w-4 mt-1.5' onClick={()=>{setShowPastDue(true);setShowCompleted(false); setShowAll(false); setShowPending(false) }}/>
-            <label htmlFor='show_pastdue' className='p-1 text-sm'>Show Past Due</label>
+            <label htmlFor='show_pastdue' className='p-1 text-sm'>Past Due</label>
 
             <input type='radio' id='show_completed' name='porc' value='Show Completed' defaultChecked={showCompleted === true?true:false} className='h-4 w-4 mt-1.5' onClick={()=>{setShowCompleted(true); setShowPastDue(false); setShowPending(false); setShowPastDue(false)}}/>
-            <label htmlFor='show_completed' className='p-1 text-sm'>Show Completed</label> 
+            <label htmlFor='show_completed' className='p-1 text-sm'>Completed</label> 
             
             <input type='radio' id='show_all' name='porc' value='Show All' defaultChecked={showAll === true?true:false} className='h-4 w-4 mt-1.5' onClick={()=>{setShowAll(true); setShowCompleted(false); setShowPastDue(false) ;setShowPending(false);}}/>
-            <label htmlFor='show_all' className='p-1 text-sm'>Show All</label>
+            <label htmlFor='show_all' className='p-1 text-sm'>All</label>
 
             <input type='radio' id='show_pending' name='porc' value='Show Pending' defaultChecked={showPending === true?true:false} className='h-4 w-4 mt-1.5' onClick={()=>{setShowPending(true); setShowAll(false); setShowCompleted(false); setShowPastDue(false)}}/>
-            <label htmlFor='show_pending' className='p-1 text-sm'>Show Pending</label>
+            <label htmlFor='show_pending' className='p-1 text-sm'>Pending</label>
           </div>
 
         </div>
@@ -73,8 +73,8 @@ export const AllTasks = ({ taskstags, setShowEditTask, deleteTask, completeTask}
                   return(
                     <div className={`task ${m.completed === 1 ?'bg-green-100!':null}`} key={m.task_id}>
                       <div className='flex justify-between'>               
-                        <span  className='flex' onClick={()=>completeTask(m.completed, m.task_id)}>
-                          {m.completed === 1? <FaCircleCheck className=' mr-2 mt-1 text-green-500 hover:text-blue-500 hover:cursor-pointer'/>:<FaCircle className='float-left mr-2 mt-1 text-white hover: cursor-pointer hover:text-blue-500' />}
+                        <span  className='flex'>
+                          {m.completed === 1? <FaCircleCheck className=' mr-2 mt-1 text-green-500 hover:text-blue-500 hover:cursor-pointer' onClick={()=>completeTask(m.completed, m.task_id)}/>:<FaCircle className='float-left mr-2 mt-1 text-white hover: cursor-pointer hover:text-blue-500' onClick={()=>completeTask(m.completed, m.task_id)} />}
                           <span className={m.completed?'line-through italic p-1':null}>{m.task_title}</span>
                         </span>
                         <span className='text-xs p-1'>{m.duedate}</span>
@@ -102,20 +102,22 @@ export const AllTasks = ({ taskstags, setShowEditTask, deleteTask, completeTask}
         }
       </div>
 
-      <div className="col-span-8 w-1/2 sm:w-full sm:col-span-2 order-1 text-sm">
+      <div className="col-span-8  sm:w-full sm:col-span-2 order-1 text-sm">
         <div className="bg-gray-300 mt-4 rounded-md p-1">
 
-          <div  className="hover:text-blue-500 hover:cursor-pointer bg-gray-400 m-0.5 rounded-md p-0.5">
-            <div className={selectedTagID === null?'text-blue-500 ml-2':null} onClick={()=>setSelectedTagID(null)}>Show All</div>
+          <div  className={`hover:text-blue-500 hover:cursor-pointer bg-gray-400 m-0.5 rounded-md p-1 ${selectedTagID === null?'text-blue-300 bg-gray-500':null}`}>
+            <div className={selectedTagID === null?'text-blue-300 bg-gray-500 ml-2':null} onClick={()=>setSelectedTagID(null)}>Show All</div>
           </div>
+          <div className="flex flex-wrap">
             {_.uniqBy(taskstags,'tag_id').map(m=>{
               return(
-                <div key={m.tag_id} className="hover:text-blue-500 hover:cursor-pointer m-0.5 p-0.5 bg-gray-400 rounded-md" onClick={()=>setSelectedTagID(m.tag_id)}>
-                  <div className={m.tag_id === selectedTagID? 'text-blue-500 pl-2':null}>{m.tag}</div>
+                <div key={m.tag_id} className={`hover:text-blue-500 hover:cursor-pointer m-0.5 p-1 bg-gray-400 rounded-md ${m.tag_id === selectedTagID? 'bg-gray-500!':null}`} onClick={()=>setSelectedTagID(m.tag_id)}>
+                  <div className={m.tag_id === selectedTagID? 'text-blue-300':null}>{m.tag}</div>
                 </div>
               )})
             }
           </div>
+        </div>
       </div>
     </div>
     
