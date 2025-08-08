@@ -28,6 +28,8 @@ function App() {
   const [refreshdata, setRefreshData] = useState(true)
   const [expanded, setExpanded] = useState([9999999])
   const [showTag, setShowTag] =useState(false)
+  const [showTagManager, setShowTagManager] = useState(false)
+
 
 
 
@@ -137,11 +139,17 @@ function App() {
   return (
     <div className='min-h-screen'>
       
-      <Header showAddTask={()=>setShowAddTask(true)}  taskstags={taskstags} setShowEditTask={setShowEditTask} deleteTask={deleteTask} completeTask={completeTask} />
+      <Header showAddTask={()=>setShowAddTask(true)}  taskstags={taskstags} setShowEditTask={setShowEditTask} deleteTask={deleteTask} completeTask={completeTask} setShowTagManager={setShowTagManager} />
       
-      <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-1  bg-gray-600 p-1'>
-        
-        <div className='flex flex-col  justify-start gap-1'>       
+      <div className='grid  grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-1  bg-gray-600 p-1'>   
+    
+        <div className='flex flex-col md:hidden sm:hidden lg:hidden xl:hidden'>
+          <div className='flex w-full bg-gray-400 rounded-lg p-1 justify-start pl-4 gap-1'>
+            <input type='checkbox' id='show_tag' value='Show Tag' className='h-4 w-4 mt-1.5' onClick={()=>setShowTag(!showTag)}/>
+            <label htmlFor='show_tag' className='p-1 text-sm mr-2'>{showTag?'Hide Tags':'Show Tags'}</label>
+          </div>
+        </div>
+        <div className=' flex flex-col  justify-start gap-1'>       
           <div  className='grow  p-1 bg-gray-400 rounded-lg'>
             <div className='w-full bg-gradient-to-r from-gray-500 to-white rounded-md p-1 mb-2 text-gray-100'>Due 5 Days</div> 
             {/* <select id='no_of_days' onChange={}>
@@ -207,7 +215,7 @@ function App() {
           </div>
         </div>
 
-        <div className='flex flex-col  justify-start gap-1'>
+        <div className=' flex flex-col  justify-start gap-1'>
           <Weeks tasks={tasks} taskstags={taskstags} setShowEditTask={setShowEditTask} deleteTask={deleteTask} completeTask={completeTask} showTag={showTag} />  
         </div>
 
@@ -215,11 +223,21 @@ function App() {
           <Months tasks={tasks} taskstags={taskstags} setShowEditTask={setShowEditTask} deleteTask={deleteTask} completeTask={completeTask} showTag={showTag}/>  
         </div>
 
-        <div className='flex flex-col gap-1 items-start'>  
-          <div className='bg-gray-400 rounded-lg p-1 w-full flex gap-2 flex-wrap'>
-            <TagManager reload={()=>setRefreshData(!refreshdata)} taskstags={taskstags} setShowTag={setShowTag} showTag={showTag} />
-          </div>
+        <div className=' flex flex-col gap-1 items-start'>  
+          {/* <div className='flex w-full bg-gray-400 rounded-lg p-1 justify-start pl-4 gap-1'>
+            <input type='checkbox' id='show_tag' value='Show Tag' className='h-4 w-4 mt-1.5' onClick={()=>setShowTag(!showTag)}/>
+            <label htmlFor='show_tag' className='p-1 text-sm mr-2'>{showTag?'Hide Tags':'Show Tags'}</label>
+          </div> */}
+          {showTagManager &&
+            <TagManager reload={()=>setRefreshData(!refreshdata)} taskstags={taskstags} setShowTag={setShowTag} showTag={showTag} clearDataCallback={()=>setShowTagManager(false)} />
+          }
 
+          {/* <div className='flex flex-col md:hidden sm:hidden lg:hidden xl:block w-full'>
+            <div className='flex w-full bg-gray-400 rounded-lg p-1 justify-start pl-4 gap-1'>
+              <input type='checkbox' id='show_tag' value='Show Tag' className='h-4 w-4 mt-1.5' onClick={()=>setShowTag(!showTag)}/>
+              <label htmlFor='show_tag' className='p-1 text-sm mr-2'>{showTag?'Hide Tags':'Show Tags'}</label>
+            </div>
+          </div> */}
           <div className=' bg-gray-400 p-1 rounded-md w-full'>
             <Stat tasks={tasks} />
           </div>
@@ -231,6 +249,8 @@ function App() {
           </div>
 
         </div>
+
+
 
       </div>
 

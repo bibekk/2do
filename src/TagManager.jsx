@@ -5,10 +5,11 @@ import AddTag from "./AddTag"
 import { FaEdit } from "react-icons/fa"
 import toast from "react-hot-toast"
 import EditTag from "./EditTag"
+import { Modal } from "./Modal"
 //import _ from 'lodash'
 
 
-const TagManager = ({reload, taskstags, setShowTag, showTag}) => {
+const TagManager = ({reload, taskstags, setShowTag, showTag, clearDataCallback}) => {
   const [tags, setTags] = useState([])
   const [refreshdata, setRefreshData] = useState(true)
   const [showAddTag, setShowAddTag] = useState(false)
@@ -51,14 +52,19 @@ const TagManager = ({reload, taskstags, setShowTag, showTag}) => {
   //const taggrp= _.groupBy(taskstags,'tag_id')
 
   return (
-    <>
-      <div className='w-full  bg-gradient-to-r from-gray-500 to-white rounded-md p-1 text-gray-100'>Tags
-        <MdAddCircle className='text-2xl float-right text-gray-500 hover:text-gray-800 hover:cursor-pointer' title='New Tag' onClick={()=> setShowAddTag(true)} />
-      </div>
+    <Modal clearDataCallback={clearDataCallback} title={"Tags"} width={'80%'} >
+      <div className='bg-gray-400 rounded-lg p-1 w-full flex gap-2 flex-wrap'>
 
-      <div className="flex w-full">
-          <input type='checkbox' id='show_tag' value='Show Tag' className='h-4 w-4 mt-1.5' onClick={()=>setShowTag(!showTag)}/>
-          <label htmlFor='show_tag' className='p-1 text-sm mr-2'>{showTag?'Hide Tags':'Show Tags'}</label>
+      {/* <div className='w-full  bg-gradient-to-r from-gray-500 to-white rounded-md p-1 text-gray-100'>Tags
+        <MdAddCircle className='text-2xl float-right text-gray-500 hover:text-gray-800 hover:cursor-pointer' title='New Tag' onClick={()=> setShowAddTag(true)} />
+      </div> */}
+      <div className="flex  gap-1 w-full mb-2">
+        <button className="flex gap-1 bg-gray-300 rounded-md p-1  hover:text-gray-200 hover:cursor-pointer hover:bg-gray-500"  onClick={()=> setShowAddTag(true)}>
+          Add New
+        </button>
+    
+          <input type='checkbox' id='show_tag1' value='Show Tag' className='h-4 w-4 mt-1.5' onClick={()=>setShowTag(!showTag)}/>
+          <label htmlFor='show_tag1' className='p-1 text-sm mr-2'>{showTag?'Hide Tags':'Show Tags'}</label>
       </div>
 
       <div className='tag tagall -mt-1'>All</div>
@@ -80,7 +86,8 @@ const TagManager = ({reload, taskstags, setShowTag, showTag}) => {
       {showEditTag.show && 
         <EditTag clearDataCallback={()=> setShowEditTag({show: false, tag: null})} refreshData={()=>{setRefreshData(!refreshdata); reload()}} tag={showEditTag.tag} />
       }
-    </>
+      </div>
+    </Modal>
   )
 }
 

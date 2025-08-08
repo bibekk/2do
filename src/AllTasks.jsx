@@ -100,7 +100,7 @@ export const AllTasks = ({ taskstags, setShowEditTask, deleteTask, completeTask}
     <div className="grid grid-cols-8 gap-2 overflow-auto max-h-[60%]">
       <div className='col-span-8 sm:col-span-6 order-2 p-1 bg-gray-400 rounded-lg w-full'>
         <div className="flex gap-2 bg-gray-100 rounded-md ml-3 p-0.5">
-          <div className='bg-amber-100 rounded-md text-sm w-fit p-1 ml-3'>{_tasks.length} {_tasks.length > 1 ?'tasks':'task'}</div>
+          <div className='font-bold rounded-md text-sm w-fit p-1 ml-3'>{_tasks.length} {_tasks.length > 1 ?'tasks':'task'}</div>
           <input type='checkbox' id='show_tag' value='Show Tag' className='h-4 w-4 mt-1.5' onClick={()=>setShowTag(!showTag)}/>
           <label htmlFor='show_tag' className='p-1 text-sm mr-2'>{showTag?'Hide Tags':'Show Tags'}</label>
           <span className="text-sm mt-1 font-thin">Tag:</span><div className='bg-gray-300 rounded-md text-sm w-fit p-1'>{selectedTagID!== null?taskstags.filter(f=> f.tag_id === selectedTagID)[0].tag:'All'}</div>
