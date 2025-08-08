@@ -162,11 +162,11 @@ function App() {
                       return(
                         <div className={`task ${m.completed === 1 ?'bg-green-100!':null}`} key={m.task_id}>
                           <div className='flex justify-between'>               
-                            <span  className='flex'>
+                            <span  className='flex flex-grow'>
                               {m.completed === 1? <FaCircleCheck className=' mr-2 mt-1 text-green-500 hover:text-blue-500 hover:cursor-pointer'/>:<FaCircle className='float-left mr-2 mt-1 text-white hover: cursor-pointer hover:text-blue-500' onClick={()=>completeTask(m.completed, m.task_id)} />}
-                              <span className={m.completed?'line-through italic p-1':null}>{m.task_title}</span>
+                              <span className={m.completed?'line-through italic p-1':'font-normal'}>{m.task_title}</span>
                             </span>
-                            <span className='text-xs p-1 '>{m.duedate}</span>
+                            <span className='text-xs p-1 content-center ml-2 mr-2'>{m.duedate}</span>
                             <div className='flex gap-0.5 mt-1'>
                               <FaEdit className='text-gray-600 hover:text-gray-900 hover:cursor-pointer' onClick={()=>setShowEditTask({show: true, task: m})} />
                               <MdDelete className='text-red-400 hover:text-red-700 hover:cursor-pointer' onClick={()=>{if(window.confirm('Are you sure you want to delete?')) {deleteTask(m.task_id)}}}/>

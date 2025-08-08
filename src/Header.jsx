@@ -19,8 +19,8 @@ export const Header = ({showAddTask, taskstags, setShowEditTask, deleteTask, com
       </div>
 
       { showAllTasks && 
-        <Modal clearDataCallback={()=>setShowAllTasks(false)} title={"All Tasks"} >
-          <AllTasks  taskstags={taskstags} setShowEditTask={setShowEditTask} deleteTask={deleteTask} completeTask={completeTask}/>
+        <Modal clearDataCallback={()=>setShowAllTasks(false)} title={"All Tasks"} width={'92%'} >
+          <AllTasks  taskstags={taskstags} setShowEditTask={setShowEditTask} deleteTask={deleteTask} completeTask={completeTask} />
         </Modal>
       }
     </>

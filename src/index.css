@@ -62,3 +62,23 @@ button{
 .react-calendar__tile--active{
   @apply bg-green-400!
 }
+
+/*Paging*/
+.page-item {
+  @apply p-1 pl-2 pr-2 bg-slate-300 
+}
+.page-item.active{
+  @apply bg-amber-200 pointer-events-none
+}
+
+.page-item:hover{
+  @apply bg-orange-200 font-bold cursor-pointer
+}
+.page-link:hover{
+  @apply font-bold
+}
+li.page-item.disabled {
+  @apply cursor-default pointer-events-none text-gray-100
+}
+
+/*Paging end*/
