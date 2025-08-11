@@ -15,7 +15,7 @@ const TagManager = ({reload, taskstags, setShowTag, showTag, clearDataCallback})
   const [showAddTag, setShowAddTag] = useState(false)
   const [showEditTag, setShowEditTag] = useState({show:false, tag: null})
   //const [showTag, setShowTag] =useState(false)
-
+  // const [selectedTags, setSelectedTags] = useState([])
 
   const getTags = async ()=>{
     try {
@@ -51,26 +51,25 @@ const TagManager = ({reload, taskstags, setShowTag, showTag, clearDataCallback})
   
   //const taggrp= _.groupBy(taskstags,'tag_id')
 
+  //console.log(selectedTags)
   return (
-    <Modal clearDataCallback={clearDataCallback} title={"Tags"} width={'80%'} >
+    <Modal clearDataCallback={clearDataCallback} title={"Tags"} width={50} >
       <div className='bg-gray-400 rounded-lg p-1 w-full flex gap-2 flex-wrap'>
 
-      {/* <div className='w-full  bg-gradient-to-r from-gray-500 to-white rounded-md p-1 text-gray-100'>Tags
-        <MdAddCircle className='text-2xl float-right text-gray-500 hover:text-gray-800 hover:cursor-pointer' title='New Tag' onClick={()=> setShowAddTag(true)} />
-      </div> */}
       <div className="flex  gap-1 w-full mb-2">
-        <button className="flex gap-1 bg-gray-300 rounded-md p-1  hover:text-gray-200 hover:cursor-pointer hover:bg-gray-500"  onClick={()=> setShowAddTag(true)}>
+        <button className="flex  gap-1 bg-gray-300 rounded-md p-1  hover:text-gray-200 hover:cursor-pointer hover:bg-gray-500" onClick={()=> setShowAddTag(true)}>
           Add New
         </button>
-    
-          {/* <input type='checkbox' id='show_tag1' value='Show Tag' className='h-4 w-4 mt-1.5' onClick={()=>setShowTag(!showTag)}/>
-          <label htmlFor='show_tag1' className='p-1 text-sm mr-2'>{showTag?'Hide Tags':'Show Tags'}</label> */}
       </div>
 
       <div className='tag tagall -mt-1'>All</div>
       {tags.map((m,i) => {
           return(
-          <div className='tag flex -mt-1' key={i}>{m.tag}
+          <div className='tag flex -mt-1' key={i}>
+            {/* <input type='checkbox' id={`tag_${m.tag_id}`} value='Show Tag' className='h-4 w-4 mt-1.5' onClick={()=>{selectedTags.filter(f=> f === m.tag_id).length === 0? setSelectedTags(prevState=> [...prevState, m.tag_id]):setSelectedTags(selectedTags.filter(f=>f!== m.tag_id))}}/>
+            <label htmlFor={`tag_${m.tag_id}`} className='p-1 text-sm mr-2'>{m.tag}</label> */}
+
+            {m.tag}
           ({taskstags.filter(f=> f.tag_id === m.tag_id).length})
             <div className="flex gap-1 mt-1  ml-2">
               <FaEdit className='text-gray-600 hover:text-gray-900 hover:cursor-pointer text-xs' onClick={()=>setShowEditTag({show: true, tag: m})} />
