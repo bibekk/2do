@@ -63,8 +63,8 @@ const TagManager = ({reload, taskstags, setShowTag, showTag, clearDataCallback})
           Add New
         </button>
     
-          <input type='checkbox' id='show_tag1' value='Show Tag' className='h-4 w-4 mt-1.5' onClick={()=>setShowTag(!showTag)}/>
-          <label htmlFor='show_tag1' className='p-1 text-sm mr-2'>{showTag?'Hide Tags':'Show Tags'}</label>
+          {/* <input type='checkbox' id='show_tag1' value='Show Tag' className='h-4 w-4 mt-1.5' onClick={()=>setShowTag(!showTag)}/>
+          <label htmlFor='show_tag1' className='p-1 text-sm mr-2'>{showTag?'Hide Tags':'Show Tags'}</label> */}
       </div>
 
       <div className='tag tagall -mt-1'>All</div>

@@ -97,18 +97,18 @@ export const AllTasks = ({ taskstags, setShowEditTask, deleteTask, completeTask}
     }
 
   return (
-    <div className="grid grid-cols-8 gap-2 overflow-auto max-h-[60%]">
+    <div className="grid grid-cols-8 gap-0 overflow-auto max-h-[60%]">
       <div className='col-span-8 sm:col-span-6 order-2 p-1 bg-gray-400 rounded-lg w-full'>
-        <div className="flex gap-2 bg-gray-100 rounded-md ml-3 p-0.5">
+        <div className="flex gap-2 bg-gray-100 rounded-md  p-0.5">
           <div className='font-bold rounded-md text-sm w-fit p-1 ml-3'>{_tasks.length} {_tasks.length > 1 ?'tasks':'task'}</div>
           <input type='checkbox' id='show_tag' value='Show Tag' className='h-4 w-4 mt-1.5' onClick={()=>setShowTag(!showTag)}/>
           <label htmlFor='show_tag' className='p-1 text-sm mr-2'>{showTag?'Hide Tags':'Show Tags'}</label>
           <span className="text-sm mt-1 font-thin">Tag:</span><div className='bg-gray-300 rounded-md text-sm w-fit p-1'>{selectedTagID!== null?taskstags.filter(f=> f.tag_id === selectedTagID)[0].tag:'All'}</div>
         </div>
         
-        <div className='p-1 ml-2 flex justify-start mt-1 mb-1'>
+        <div className='p-1 -ml-1 flex justify-start '>
 
-          <div className="bg-gray-100 rounded-md p-0.5 pl-1 flex font-thin">
+          <div className="bg-gray-100 rounded-md p-0.5 pl-1 flex font-thin w-full">
             <input type='radio' id='show_pastdue' name='porc' value='Show Past' className='h-4 w-4 mt-1.5' onClick={()=>{setShowPastDue(true);setShowCompleted(false); setShowAll(false); setShowPending(false);setPaging((prevState) => ({ ...prevState, currentPage: 1 })) }}/>
             <label htmlFor='show_pastdue' className='p-1 text-sm'>Past Due</label>
 
@@ -124,7 +124,7 @@ export const AllTasks = ({ taskstags, setShowEditTask, deleteTask, completeTask}
 
         </div>
 
-        <div className="ml-3 flex gap-2 mb-2 bg-gray-200 rounded-md w-fit p-1">
+        <div className=" flex gap-2 mb-2 bg-gray-200 rounded-md w-fit p-1">
           <div className="font-thin text-sm mt-1">Per Page:</div>
           <select id='per_page' className="w-15 bg-gray-300 h-8" onChange={(e)=>{setPerPage(e.target.value);setPaging((prevState) => ({ ...prevState, top: e.target.value }))}}>
             <option value='5'>5</option>
@@ -135,32 +135,9 @@ export const AllTasks = ({ taskstags, setShowEditTask, deleteTask, completeTask}
         </div>
 
         {_tasks.length > 0 &&
-          <div className='flex flex-col gap-2 mx-2'>
+          <div className='flex flex-col gap-2'>
             <div className='space-y-1 bg-gray-500 rounded-lg p-2 max-w-lg'>
               {_data}
-              {/* {_tasks.map((m,i) => {
-                return(
-                  <div className={`task ${m.completed === 1 ?'bg-green-100!':null}`} key={m.task_id}>
-                    <div className='flex justify-between'>               
-                      <span  className='flex flex-grow'>
-                        {m.completed === 1? <FaCircleCheck className=' mr-2 mt-1 text-green-500 hover:text-blue-500 hover:cursor-pointer' onClick={()=>completeTask(m.completed, m.task_id)}/>:<FaCircle className='float-left mr-2 mt-1 text-white hover: cursor-pointer hover:text-blue-500' onClick={()=>completeTask(m.completed, m.task_id)} />}
-                        <span className={m.completed?'line-through italic p-1':null}>{m.task_title}</span>
-                      </span>
-                      <div className='text-xs p-1 content-center ml-2 mr-2'>{m.duedate}</div>
-                      <div className='flex gap-1 mt-1'>
-                        <FaEdit className='text-gray-600 hover:text-gray-900 hover:cursor-pointer' onClick={()=>setShowEditTask({show: true, task: m})} />
-                        <MdDelete className='text-red-400 hover:text-red-700 hover:cursor-pointer' onClick={()=>{if(window.confirm('Are you sure you want to delete?')) {deleteTask(m.task_id)}}}/>
-                      </div>
-                    </div>
-
-                    {showTag &&
-                      <div className='flex mt-2 border-t-gray-300 border-1 border-b-0 border-l-0 border-r-0 pt-1 flex-wrap'>
-                      {taskstags.filter(f=> f.task_id ===m.task_id).map(item => <div key={item.tag_id} className='task-tag'>{item.tag}</div>)}
-                      </div>
-                    }
-                  </div>
-                )
-              })} */}
             </div>
           </div>
         }
@@ -170,8 +147,8 @@ export const AllTasks = ({ taskstags, setShowEditTask, deleteTask, completeTask}
         }
       </div>
 
-      <div className="col-span-8  sm:w-full sm:col-span-2 order-1 text-sm">
-        <div className="bg-gray-300 mt-4 rounded-md p-1">
+      <div className="col-span-8   sm:col-span-2 order-1 text-sm">
+        <div className="bg-gray-300 mt-1 rounded-md p-1">
 
           {/* <div  className={`hover:text-blue-500 hover:cursor-pointer bg-gray-400 m-0.5 rounded-md p-1 ${selectedTagID === null?'text-blue-300 bg-gray-500':null}`}>
             <div className={selectedTagID === null?'text-blue-300 bg-gray-500 ml-2':null} onClick={()=>setSelectedTagID(null)}>Show All</div>

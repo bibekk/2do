@@ -13,11 +13,11 @@ button{
 }
 
 .task-pastdue{
-  @apply bg-orange-200
+  @apply bg-orange-100
 }
 
 .task-date{
-  @apply text-xs text-gray-700  border-1  -ml-1.5 rounded-r-xl p-0.5 bg-gray-100
+  @apply text-xs text-gray-700  border-1   rounded-r-xl p-0.5 bg-gray-100
 }
 
 .task-tag{
@@ -39,6 +39,10 @@ button{
 
 .message{
   @apply p-1 bg-amber-100 rounded-md font-thin text-sm mt-2 border-l-blue-400 border-8 border-t-0 border-r-0 border-b-0
+}
+
+.message_notfound{
+  @apply p-1 bg-red-100 rounded-md font-thin text-sm mt-2 border-l-red-400 border-8 border-t-0 border-r-0 border-b-0
 }
 
 /* for react-calendar */
