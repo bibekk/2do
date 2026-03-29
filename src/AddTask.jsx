@@ -77,7 +77,7 @@ export default function AddTask({clearDataCallback, tags, reload}) {
   return (
     <Modal clearDataCallback={clearDataCallback} title={"Add Task"}>
       <form onSubmit={onSubmit} className='mt-2 grid grid-cols-8 gap-4'>
-          <div className='p-1 bg-gray-300 font-thin text-sm border-l-4 border-l-green-500 ml-2 mb-2 col-span-8 '>Select one or more tags from below:</div>
+          {/* <div className='p-1 bg-gray-300 font-thin text-sm border-l-4 border-l-green-500 ml-2 mb-2 col-span-8 '>Select one or more tags from below:</div> */}
 
 
           <Select className='col-span-8' defaultValue={selectedOption} onChange={setSelectedOption} options={_tags} isMulti={true} placeholder='Select one or more tags' name='tag' />
@@ -93,7 +93,7 @@ export default function AddTask({clearDataCallback, tags, reload}) {
           <div className='col-span-8'>
             <div className='flex flex-row justify-center gap-2'>
               <div className='mt-1'>Due Date</div>
-              <DatePicker selected={startDate} onChange={(date)=> setStartDate(date)} minDate={new Date()} maxDate={dayjs().add(1,'year')} className=' bg-gray-100 p-1' id='duedate'/>
+              <DatePicker selected={startDate} onChange={(date)=> setStartDate(date)} minDate={new Date()} maxDate={dayjs().add(5,'year')} className=' bg-gray-100 p-1' id='duedate'/>
             </div>
           </div>
 

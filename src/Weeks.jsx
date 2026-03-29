@@ -1,9 +1,7 @@
 import dayjs from "dayjs"
 import { FaCircle, FaEdit } from "react-icons/fa"
 import { FaCircleCheck } from 'react-icons/fa6';
-
 import { MdDelete } from "react-icons/md"
-
 import weekOfYear from 'dayjs/plugin/weekOfYear'
 import { SlArrowRight } from "react-icons/sl"
 import { useState } from "react";

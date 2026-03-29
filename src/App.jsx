@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import 'react-calendar/dist/Calendar.css';
-import Calendar from 'react-calendar'
+// import Calendar from 'react-calendar'
 import { MdDelete } from 'react-icons/md';
 import { FaCircle, FaEdit } from 'react-icons/fa';
 import AddTask from './AddTask';
@@ -8,7 +8,7 @@ import { base_url } from './Util';
 import { FaCircleCheck } from 'react-icons/fa6';
 import { Header } from './Header';
 import TagManager from './TagManager';
-import Stat from './Stat';
+//import Stat from './Stat';
 import EditTask from './EditTask';
 import Months from './Months';
 import Weeks from './Weeks';
@@ -18,6 +18,8 @@ import dayjs from 'dayjs';
 import { RiExpandDiagonal2Line } from 'react-icons/ri';
 import { GiContract } from 'react-icons/gi';
 import _ from 'lodash'
+import Cal from './Cal';
+import Years from './Years';
 
 function App() {
   const [showAddTask, setShowAddTask] = useState(false)
@@ -144,6 +146,13 @@ function App() {
       <Header showAddTask={()=>setShowAddTask(true)}  taskstags={taskstags} setShowEditTask={setShowEditTask} deleteTask={deleteTask} completeTask={completeTask} setShowTagManager={setShowTagManager} />
       
       <div className='grid  grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-1  bg-gray-600 p-1'>   
+        <div className=' flex flex-col gap-1 items-start col-span-4'>  
+          <div className=' bg-gray-400 rounded-lg p-1 w-full'>
+            {/* <div className='mb-2 bg-gradient-to-r from-gray-500 to-white rounded-md p-1 text-gray-100'>Calendar View</div> */}
+            <Cal refreshdata={refreshdata} />
+          </div>
+        </div>
+
         <div className=' flex flex-col  justify-start gap-1'>
           {_tasksDue.length > 0 &&
             <div  className='grow  p-1 bg-gray-400 rounded-lg'>
@@ -260,18 +269,11 @@ function App() {
           <Months tasks={tasks} taskstags={taskstags} setShowEditTask={setShowEditTask} deleteTask={deleteTask} completeTask={completeTask} showTag={showTag}/>  
         </div>
 
-        <div className=' flex flex-col gap-1 items-start'>  
-          <div className=' bg-gray-400 p-1 rounded-md w-full'>
-            <Stat tasks={tasks} />
-          </div>
-
-          <div className=' bg-gray-400 rounded-lg p-1 w-full'>
-            <div className='mb-2 bg-gradient-to-r from-gray-500 to-white rounded-md p-1 text-gray-100'>Calendar View</div>
-
-            <Calendar minDate={new Date()}  onChange={onChange} value={value} className='rounded-md p-1 w-full' defaultView='month' tileContent={tileContent} calendarType='gregory'  />
-          </div>
-
+        <div className='flex flex-col  justify-start gap-1'>
+          <Years tasks={tasks} taskstags={taskstags} setShowEditTask={setShowEditTask} deleteTask={deleteTask} completeTask={completeTask} showTag={showTag}/>  
         </div>
+
+
       </div>
 
       { showAddTask && 
