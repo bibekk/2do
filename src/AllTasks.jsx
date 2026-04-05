@@ -12,7 +12,7 @@ export const AllTasks = ({ taskstags, setShowEditTask, deleteTask, completeTask}
   const [showAll, setShowAll] =useState(false)
   const [showPending, setShowPending] =useState(true)
   const [selectedTagID, setSelectedTagID] = useState(null)
-  const PERPAGE = 5
+  const PERPAGE = 15
   const [perPage, setPerPage] = useState(PERPAGE)
   const [paging, setPaging] = useState({ top: perPage, skip: 0, currentPage: 1 })
 
@@ -70,7 +70,7 @@ export const AllTasks = ({ taskstags, setShowEditTask, deleteTask, completeTask}
     if(_chunkData.length > 0 ){
     _data = _chunkData[_currentPage - 1 ].map((m, index) => {
       return(
-        <div className={`task ${m.completed === 1 ?'bg-green-100!':null}`} key={m.task_id}>
+        <div className={`bg-gray-200 p-0.5 shadow font-thin text-xs   ${m.completed === 1 ?'bg-green-100!':null}`} key={m.task_id}>
           <div className='flex justify-between'>               
             <span  className='flex flex-grow'>
               {m.completed === 1? <FaCircleCheck className=' mr-2 mt-1 text-green-500 hover:text-blue-500 hover:cursor-pointer' onClick={()=>completeTask(m.completed, m.task_id)}/>:<FaCircle className='float-left mr-2 mt-1 text-white hover: cursor-pointer hover:text-blue-500' onClick={()=>completeTask(m.completed, m.task_id)} />}
@@ -97,7 +97,7 @@ export const AllTasks = ({ taskstags, setShowEditTask, deleteTask, completeTask}
     }
 
   return (
-    <div className="grid grid-cols-8 gap-0 overflow-auto max-h-[60%]">
+    <div className="grid grid-cols-8 gap-0 overflow-auto max-h-[80%] h-[800px]">
       <div className='col-span-8 sm:col-span-6 order-2 p-1 bg-gray-400 rounded-lg w-full'>
         <div className="flex gap-2 bg-gray-100 rounded-md  p-0.5">
           <div className='font-bold rounded-md text-sm w-fit p-1 ml-3'>{_tasks.length} {_tasks.length > 1 ?'tasks':'task'}</div>
@@ -127,16 +127,17 @@ export const AllTasks = ({ taskstags, setShowEditTask, deleteTask, completeTask}
         <div className=" flex gap-2 mb-2 bg-gray-200 rounded-md w-fit p-1">
           <div className="font-thin text-sm mt-1">Per Page:</div>
           <select id='per_page' className="w-15 bg-gray-300 h-8" onChange={(e)=>{setPerPage(e.target.value);setPaging((prevState) => ({ ...prevState, top: e.target.value }))}}>
-            <option value='5'>5</option>
-            <option value='10'>10</option>
-            <option value='15'>15</option>
+            <option value='5' selected={perPage === 5 ?'selected':null}>5</option>
+            <option value='10' selected={perPage === 10 ?'selected':null}>10</option>
+            <option value='15' selected={perPage === 15 ?'selected':null}>15</option>
+            <option value='20' selected={perPage === 20 ?'selected':null}>20</option>
           </select>
           <Paging total={_tasks.length} itemsPerPage={paging.top} nextHandler={nextPage} prevHandler={prevPage} currentPage={paging.currentPage} goToPageHandler={goToPage}></Paging>
         </div>
 
         {_tasks.length > 0 &&
           <div className='flex flex-col gap-2'>
-            <div className='space-y-1 bg-gray-500 rounded-lg p-2 max-w-lg'>
+            <div className='space-y-1 bg-gray-500 rounded-md p-2 max-w-lg'>
               {_data}
             </div>
           </div>
@@ -154,12 +155,12 @@ export const AllTasks = ({ taskstags, setShowEditTask, deleteTask, completeTask}
             <div className={selectedTagID === null?'text-blue-300 bg-gray-500 ml-2':null} onClick={()=>setSelectedTagID(null)}>Show All</div>
           </div> */}
           <div className="flex flex-wrap">
-            <div className={`hover:text-blue-500 hover:cursor-pointer m-0.5 p-1 bg-gray-400 rounded-md ${selectedTagID === null?'text-blue-600 bg-gray-500!':null}}`} onClick={()=>setSelectedTagID(null)}>All</div>
+            <div className={`hover:text-blue-500 hover:cursor-pointer m-0.5 p-1 bg-gray-400 rounded-md ${selectedTagID === null?'text-blue-300 font-bold bg-gray-500!':null}}`} onClick={()=>setSelectedTagID(null)}>All<span className="text-slate-300">({taskstags.length})</span></div>
 
             {_.uniqBy(taskstags,'tag_id').map(m=>{
               return(
                 <div key={m.tag_id} className={`hover:text-blue-500 hover:cursor-pointer m-0.5 p-1 bg-gray-400 rounded-md ${m.tag_id === selectedTagID? 'bg-gray-500!':null}`} onClick={()=>{setSelectedTagID(m.tag_id);setPaging((prevState) => ({ ...prevState, currentPage: 1 }))}}>
-                  <div className={m.tag_id === selectedTagID? 'text-blue-300':null}>{m.tag}</div>
+                  <div className={m.tag_id === selectedTagID? 'text-blue-300 font-bold':null}>{m.tag}<span className="text-slate-300">({taskstags.filter(f=> f.tag === m.tag).length})</span></div>
                 </div>
               )})
             }

@@ -3,11 +3,14 @@ import Calendar from 'react-calendar'
 import { base_url } from './Util';
 
 
-const Cal = (refreshdata) => {
+const Cal = ({refreshdata, setDueDate}) => {
   const [value, onChange] = useState(new Date())
   const [tasks, setTasks] = useState([])
   //const [refreshdata, setRefreshData] = useState(true)
 
+  const onClickDay = (value, event) => {
+    setDueDate(new Date(value))
+  }
 
 
   const tileContent = ({date,view})=>{
@@ -67,7 +70,7 @@ const Cal = (refreshdata) => {
 
   
   return (
-    <Calendar minDate={new Date()}  onChange={onChange} value={value} className='rounded-md p-1 w-full bg-gray-400!' defaultView='month' tileContent={tileContent} calendarType='gregory'  showDoubleView={true} />
+    <Calendar minDate={new Date()}  onChange={onChange} value={value} className='rounded-md p-1 w-full bg-gray-400!' defaultView='month' tileContent={tileContent} calendarType='gregory'  showDoubleView={true} onClickDay={onClickDay} showNeighboringMonth={false} />
   )
 }
 

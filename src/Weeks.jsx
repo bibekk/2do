@@ -25,7 +25,7 @@ const ThreeWeeks = ({tasks, taskstags, setShowEditTask, deleteTask, completeTask
   //removed grow from div below
   return (
     <div className='grow p-1 bg-gray-400 rounded-lg'>
-      <div className='w-full bg-gradient-to-r from-gray-500 to-white rounded-md p-1 mb-2 text-gray-100'>Next 6 Weeks 
+      <div className='task-heading'>Next 6 Weeks 
         {/* ({tasks.filter(f=> f.duedate.split('/')[0] === String(new Date().getMonth() + 2).padStart(2,'0')).length} {tasks.filter(f=> f.duedate.split('/')[0] === String(new Date().getMonth() + 2).padStart(2,'0')).length > 1 ?'tasks':'task'}) */}
 
       </div>

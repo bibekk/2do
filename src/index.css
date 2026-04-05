@@ -10,6 +10,13 @@ html{
 button{
   @apply hover:cursor-pointer
 }
+.task-headingold{
+  @apply w-full bg-gradient-to-r from-gray-500 to-white rounded-md p-1 mb-2 text-gray-100
+}
+
+.task-heading{
+  @apply w-auto text-sm font-bold border-r-1 border-b-1 rounded-md bg-slate-200 mb-1 p-0.5
+}
 
 .task {
   @apply bg-gray-200 p-2 rounded-md shadow font-thin text-sm mt-1 
@@ -80,11 +87,15 @@ button{
 }
 
 .react-calendar__tile{
-  @apply bg-gray-200!  border-1! border-gray-400! rounded-md!
+  @apply bg-gray-200!  border-1! border-gray-400! 
 }
 
+/* .react-calendar__month-view__days{
+  width: min-content!
+} */
+
 .react-calendar__tile div{
-  @apply w-[100%]!
+  @apply w-auto!
 }
 
 .react-calendar__tile--now{
@@ -92,7 +103,7 @@ button{
 }
 
 .react-calendar__tile--active{
-  @apply bg-green-300! text-gray-600! font-bold!
+  @apply bg-green-500! text-gray-600! font-bold!
 }
 
 /*Paging*/

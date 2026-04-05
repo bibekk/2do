@@ -20,7 +20,7 @@ const ThreeMonths = ({tasks, taskstags, setShowEditTask, deleteTask, completeTas
 
   return (
     <div className='grow p-1 bg-gray-400 rounded-lg'>
-      <div className='w-full bg-gradient-to-r from-gray-500 to-white rounded-md p-1 mb-2 text-gray-100'>Next 6 Months 
+      <div className='task-heading'>Next 6 Months 
         {/* ({tasks.filter(f=> f.duedate.split('/')[0] === String(new Date().getMonth() + 2).padStart(2,'0')).length} {tasks.filter(f=> f.duedate.split('/')[0] === String(new Date().getMonth() + 2).padStart(2,'0')).length > 1 ?'tasks':'task'}) */}
 
       </div>
@@ -34,7 +34,7 @@ const ThreeMonths = ({tasks, taskstags, setShowEditTask, deleteTask, completeTas
           return( //<span className='task-date w-fit flex gap-1'> //task-date w-fit flex gap-1
             tasks.filter(f=> f.duedate.split('/')[0] === String(new Date().getMonth() + (_month +1 )).padStart(2,'0') && f.completed === 0).length > 0 &&
             <div key={_month} className='space-y-1 bg-gray-500 rounded-lg p-2 max-w-lg'>
-          <span className='task-date w-fit flex gap-1'>{dayjs().add(_month,'M').format('MMM, YYYY')}</span>
+          <span className='task-date w-fit flex gap-1'>{dayjs().add(_month,'M').format('MMM YYYY')}</span>
 
           {tasks.filter(f=> f.duedate.split('/')[0] === String(new Date().getMonth() + (_month +1 )).padStart(2,'0') && f.completed === 0).map((m,i) => {
             return(

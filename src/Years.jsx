@@ -18,7 +18,7 @@ const Years = ({tasks, taskstags, setShowEditTask, deleteTask, completeTask, sho
 
   return (
     <div className='grow p-1 bg-gray-400 rounded-lg'>
-      <div className='w-full bg-gradient-to-r from-gray-500 to-white rounded-md p-1 mb-2 text-gray-100'>Next Year 
+      <div className='task-heading'>Next Year 
       </div>
                     
       <div className='flex flex-col gap-2 mx-2'>
