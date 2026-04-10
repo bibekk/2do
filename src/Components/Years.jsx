@@ -6,10 +6,16 @@ import { GiContract } from "react-icons/gi"
 import { MdDelete } from "react-icons/md"
 import { RiExpandDiagonal2Line } from "react-icons/ri"
 import _ from 'lodash'
+import { useDispatch, useSelector } from "react-redux"
+import { completeTask, deleteTask } from "../reducers/taskSlice"
 
 
-const Years = ({tasks, taskstags, setShowEditTask, deleteTask, completeTask, showTag}) => {
+const Years = ({ setShowEditTask}) => {
+  const dispatch = useDispatch()
   const [expanded, setExpanded] = useState([9999999])
+  const tasks = useSelector((state) => state.taskstags.tasks)
+  const taskstags = useSelector((state) => state.taskstags.data)
+
   let countYears = 0 
   if(tasks.filter(f=> f.duedate.split('/')[2] === String(new Date().getFullYear() + 1 ).padStart(2,'0') && f.completed === 0).length > 0){
       countYears = 1
@@ -35,13 +41,13 @@ const Years = ({tasks, taskstags, setShowEditTask, deleteTask, completeTask, sho
                   <div className={`task ${m.completed === 1 ?'bg-green-100!':null}`} key={m.task_id}>
                     <div className='flex justify-between'>               
                       <span  className='flex flex-grow'>
-                        {m.completed === 1? <FaCircleCheck className=' mr-2 mt-1 text-green-500 hover:text-blue-500 hover:cursor-pointer' />:<FaCircle className='float-left mr-2 mt-1 text-white hover: cursor-pointer hover:text-blue-500' onClick={()=>completeTask(m.completed, m.task_id)} />}
+                        {m.completed === 1? <FaCircleCheck className=' mr-2 mt-1 text-green-500 hover:text-blue-500 hover:cursor-pointer' />:<FaCircle className='float-left mr-2 mt-1 text-white hover: cursor-pointer hover:text-blue-500' onClick={()=>dispatch(completeTask({stat:m.completed,tid: m.task_id}))} />}
                         <span className={m.completed?'line-through italic p-1':'font-normal'}>{m.task_title}</span>
                       </span>
                       <span className='text-xs p-1 content-center ml-2 mr-2'>{m.duedate}</span>
                     </div>
 
-                    { expanded.indexOf(m.task_id) > 0 &&
+                    { expanded.indexOf(m.task_id) > 0 && //m.expanded && // 
                       <>
                         <div className='bg-gray-300 rounded-md p-1'>{m.note.length > 3 ? m.note:<div className="message_notfound">No Note</div>}</div>
                         <div className='flex mt-1 flex-wrap'>
@@ -53,7 +59,7 @@ const Years = ({tasks, taskstags, setShowEditTask, deleteTask, completeTask, sho
                     <div className='flex justify-between border-t-gray-300 border-1 border-b-0 border-l-0 border-r-0 pt-1 mt-1'>                      
                       <div className='flex gap-1  mt-1'>
                         <FaEdit className='text-gray-600 text-lg hover:text-gray-900 hover:cursor-pointer' onClick={()=>setShowEditTask({show: true, task: m})} />
-                        <MdDelete className='text-red-400 text-lg hover:text-red-700 hover:cursor-pointer' onClick={()=>{if(window.confirm(`Are you sure you want to delete "${m.task_title}"?`)) {deleteTask(m.task_id)}}}/>
+                        <MdDelete className='text-red-400 text-lg hover:text-red-700 hover:cursor-pointer' onClick={()=>{if(window.confirm(`Are you sure you want to delete "${m.task_title}"?`)) {dispatch(deleteTask(m.task_id))}}}/>
                       </div>
 
                       <div className='mt-1'>

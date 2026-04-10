@@ -5,11 +5,16 @@ import { MdDelete } from "react-icons/md"
 import { RiExpandDiagonal2Line } from "react-icons/ri"
 import _ from 'lodash'
 import { useState } from "react"
+import { useDispatch, useSelector } from "react-redux"
+import { completeTask, deleteTask } from "../reducers/taskSlice"
 
 
-const TaskDue = ({ taskstags , setShowEditTask, deleteTask, completeTask,}) => {
+const TaskDue = ({  setShowEditTask}) => {
   const [expanded, setExpanded] = useState([9999999])
-  
+  const taskstags = useSelector((state)=> state.taskstags.data)
+
+  const dispatch = useDispatch()
+
   let _tasksDue = _.uniqBy(taskstags,'task_id')
   _tasksDue = _tasksDue.filter(f=> f.completed === 0 && new Date(f.duedate) < new Date(new Date().toLocaleDateString()))
   
@@ -24,7 +29,7 @@ const TaskDue = ({ taskstags , setShowEditTask, deleteTask, completeTask,}) => {
                 <div className={`task task-pastdue ${m.completed === 1 ?'bg-green-100!':null}`} key={m.task_id}>
                   <div className='flex justify-between'>               
                     <span  className='flex flex-grow'>
-                      {m.completed === 1? <FaCircleCheck className=' mr-2 mt-1 text-green-500 hover:text-blue-500 hover:cursor-pointer'/>:<FaCircle className='float-left mr-2 mt-1 text-white hover: cursor-pointer hover:text-blue-500' onClick={()=>completeTask(m.completed, m.task_id)} />}
+                      {m.completed === 1? <FaCircleCheck className=' mr-2 mt-1 text-green-500 hover:text-blue-500 hover:cursor-pointer'/>:<FaCircle className='float-left mr-2 mt-1 text-white hover: cursor-pointer hover:text-blue-500' onClick={()=>dispatch(completeTask({stat:m.completed,tid: m.task_id}))} />}
                       <span className={m.completed?'line-through italic p-1':'font-normal'}>{m.task_title}</span>
                     </span>
                     <span className='text-xs p-1 content-center ml-2 mr-2'>{m.duedate}</span>
@@ -42,7 +47,7 @@ const TaskDue = ({ taskstags , setShowEditTask, deleteTask, completeTask,}) => {
                   <div className='flex justify-between border-t-gray-300 border-1 border-b-0 border-l-0 border-r-0 pt-1 mt-1'>                      
                     <div className='flex gap-1  mt-1'>
                       <FaEdit className='text-gray-600 text-lg hover:text-gray-900 hover:cursor-pointer' onClick={()=>setShowEditTask({show: true, task: m})} />
-                      <MdDelete className='text-red-400 text-lg hover:text-red-700 hover:cursor-pointer' onClick={()=>{if(window.confirm(`Are you sure you want to delete "${m.task_title}"?`)) {deleteTask(m.task_id)}}}/>
+                      <MdDelete className='text-red-400 text-lg hover:text-red-700 hover:cursor-pointer' onClick={()=>{if(window.confirm(`Are you sure you want to delete "${m.task_title}"?`)) {dispatch(deleteTask(m.task_id))}}}/>
                     </div>
 
                     <div className='mt-1'>

@@ -1,18 +1,17 @@
-import { useEffect, useState } from 'react'
+import {  useState } from 'react'
 import Calendar from 'react-calendar'
-import { base_url } from './Util';
+import {  useSelector } from 'react-redux';
 
-
-const Cal = ({refreshdata, setDueDate}) => {
+const Cal = ({ setDueDate}) => {
   const [value, onChange] = useState(new Date())
-  const [tasks, setTasks] = useState([])
-  //const [refreshdata, setRefreshData] = useState(true)
+  const tasks = useSelector((state)=> state.taskstags.tasks)
 
+  //when clicking day in Cal
   const onClickDay = (value, event) => {
     setDueDate(new Date(value))
   }
 
-
+  //for formatting day 
   const tileContent = ({date,view})=>{
     var incomplete_tasks = []
     for(var i=0; i < tasks.length; i++){
@@ -41,36 +40,9 @@ const Cal = ({refreshdata, setDueDate}) => {
      //console.log(incomplete_tasks)
     return (incomplete_tasks.length > 0 ?<div className='flex flex-col rounded-sm text-xs text-left'>{incomplete_tasks.map(m=> <div key={m.task_id} className='bg-gray-500 m-0.5 p-0.5 pl-1 rounded-sm font-thin  wrap-anywhere text-gray-300 border-l-4 border-l-blue-600' title={m.note}>{m.task_title}</div>)}</div>: null)
   }
-
-  const getTaskTags = async ()=>{
-    try {
-      const resp = await fetch(`${base_url()}/task/gettasktag`)
-      const resp_data = await resp.json()
-      setTasksTags(resp_data)
-    }catch(err) {
-      console.log(err)
-    }    
-  }
-
-  const getTasks = async ()=>{
-    try {
-      const resp = await fetch(`${base_url()}/task/gettasks`)
-      const resp_data = await resp.json()
-      setTasks(resp_data)
-    }catch(err) {
-      console.log(err)
-    }    
-  }
-
-  useEffect(()=>{
-    //getTags()
-    getTasks()
-    //getTaskTags()
-  },[refreshdata])
-
   
   return (
-    <Calendar minDate={new Date()}  onChange={onChange} value={value} className='rounded-md p-1 w-full bg-gray-400!' defaultView='month' tileContent={tileContent} calendarType='gregory'  showDoubleView={true} onClickDay={onClickDay} showNeighboringMonth={false} />
+    <Calendar minDate={new Date()}  onChange={onChange} value={value} className='rounded-md p-1 w-full bg-gray-400!' defaultView='month' tileContent={tileContent} calendarType='gregory'  showDoubleView={false} onClickDay={onClickDay} showNeighboringMonth={false} />
   )
 }
 

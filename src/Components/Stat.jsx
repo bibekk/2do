@@ -1,14 +1,17 @@
 
 //import dayjs from "dayjs"
 
-const Stat = ({tasks}) => {
+import { useSelector } from "react-redux"
+
+const Stat = () => {
+  const tasks = useSelector((state) => state.taskstags.tasks)
   const perc_complete =(tasks.filter(f=> f.completed === 1).length/tasks.length * 100).toFixed(2)
 
   //console.log(tasks.filter(f=> f.completed === 0 && dayjs().isAfter(f.duedate)))
   //console.log(tasks)
   return (
-    <div className='flex flex-col'>
-      <div className='w-full bg-gradient-to-r from-gray-500 to-white rounded-md p-1 text-gray-100'>Summary ({(tasks.filter(f=> f.completed === 1).length/tasks.length*100).toFixed(2)}%)</div>
+    <div className='flex flex-col grow  p-1 bg-gray-400 rounded-lg'>
+      <div className='task-heading'>Summary ({(tasks.filter(f=> f.completed === 1).length/tasks.length*100).toFixed(2)}%)</div>
       <div className='flex flex-col gap-1 p-0.5 text-sm mx-8 text-gray-100'>
         <div className='flex gap-2 justify-center'><span>Total</span><span>{tasks.length}</span></div>
         <div className='flex gap-2 justify-center'><span>Completed</span><span>{tasks.filter(f=> f.completed === 1).length}</span></div>

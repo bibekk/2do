@@ -1,51 +1,46 @@
 import { useState } from 'react'
-import { Modal } from './Modal'
+import { Modal } from '../Utils/Modal'
 import 'react-datepicker/dist/react-datepicker.css'
-import toast from 'react-hot-toast'
-import { base_url } from './Util'
+import { useDispatch } from 'react-redux'
+import { addTag } from '../../reducers/tagSlice'
 
 
-export default function AddTag({clearDataCallback, refreshData}) {
+export default function AddTag({clearDataCallback}) {
   const [tag, setTag] = useState(null)
+  const dispatch = useDispatch()
+
+  //form validation
+  const [inp_tag, setInpTag] = useState(undefined)
 
   const onSubmit = async(e)=>{
     e.preventDefault()
-    //console.log(e.target.tag.value,  e.target.note.value)
-    
-
-    try {
-      const resp = await fetch(`${base_url()}/tag/addtag`, {
-        method: 'POST',
-        headers:{
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({tag: e.target.tag.value, note: e.target.note.value})
-      })
-
-      const resp_data = await resp.json()
-      //console.log(resp_data)
-      clearDataCallback()
-      refreshData()
-      toast.success("Tag Added!",{position: "top-center", duration: 1000, style: {background: '#333', color: '#fff'}})
-
-    }catch(err) {
-      console.log(err)
+    if(e.target.tag.length === undefined && e.target.tag.value === ''){
+      setInpTag(false)
+    }else{
+      setInpTag(true)
     }
+    if(e.target.tag.length === undefined && e.target.tag.value === ''){
+      return
+    }
+    dispatch(addTag({tag: e.target.tag.value, note: e.target.note.value}))
+    clearDataCallback()
   }
 
   const onChangeTag = (m)=>{
+    if((m.target.value.length === undefined || m.target.value.lengh === 0) || m.target.value === ''){
+      setInpTag(false)
+    }else{
+      setInpTag(true)
+    }
     setTag(m.target.value)
   }
 
-  //console.log(selectedOption)
- // console.log(tags)
-  //const _tags = tags.map(m=>({...m, value:m.tag_id, label: m.tag}))
 
   return (
     <Modal clearDataCallback={clearDataCallback} title={"Add Tag"}>
       <form onSubmit={onSubmit} className='mt-2 grid grid-cols-8 gap-4'>
           <input type='text' id='tag' placeholder='Tag'  className='bg-white rounded-md  col-span-8 p-2' onChange={(e)=>onChangeTag(e)} />
-          
+          {inp_tag === false ? <span className='text-sm text-red-500 col-span-8'>*Tag is required</span>:null}
           {/* <button className='col-span-1. bg-neutral-500 hover:bg-neutral-700 hover:text-gray-300 rounded-md'  onClick={(e)=>{e.preventDefault();document.getElementById('task').value = ''; setTask(null);}}>Clear</button> */}
 
           <textarea id='note' className='col-span-8 bg-gray-100 p-1' placeholder='Note'></textarea>

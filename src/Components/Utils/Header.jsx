@@ -2,11 +2,11 @@ import { PiBabyBold } from "react-icons/pi"
 import { FaTasks } from "react-icons/fa"
 import { MdAddCircle } from "react-icons/md"
 import { Modal } from "./Modal"
-import { AllTasks } from "./AllTasks"
+import { AllTasks } from "../Task/AllTasks"
 import { useState } from "react"
 import { IoPricetagsOutline } from "react-icons/io5"
 
-export const Header = ({showAddTask, taskstags, setShowEditTask, deleteTask, completeTask, setShowTagManager}) => {
+export const Header = ({showAddTask, setShowEditTask, deleteTask, completeTask, setShowTagManager}) => {
   const [showAllTasks, setShowAllTasks] = useState(false)
   
   return (
@@ -27,7 +27,7 @@ export const Header = ({showAddTask, taskstags, setShowEditTask, deleteTask, com
 
       { showAllTasks && 
         <Modal clearDataCallback={()=>setShowAllTasks(false)} title={"All Tasks"} width={'92%'} >
-          <AllTasks  taskstags={taskstags} setShowEditTask={setShowEditTask} deleteTask={deleteTask} completeTask={completeTask} />
+          <AllTasks  setShowEditTask={setShowEditTask} />
         </Modal>
       }
     </>

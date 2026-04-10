@@ -1,18 +1,47 @@
 import DatePicker from 'react-datepicker';
-import { Modal } from './Modal';
-import { base_url } from './Util';
-import toast from 'react-hot-toast';
+import { Modal } from '../Utils/Modal';
 import Select from 'react-select';
 import {  useState } from 'react';
 import dayjs from 'dayjs';
+import { useDispatch, useSelector } from 'react-redux';
+import { updateTaskDetail } from '../../reducers/taskSlice';
 
-const EditTask = ({clearDataCallback, task, tags, taskstags, reload}) => {
+const EditTask = ({clearDataCallback, task}) => {
+  const taskstags = useSelector( (state) => state.taskstags.data)
+  const tags = useSelector((state) => state.tags.data)
+  const dispatch = useDispatch()
+
   const [selectedOption, setSelectedOption] = useState(taskstags.filter(f=> f.task_id === task.task_id).map(m=>({...m, value:m.tag_id, label: m.tag})))
   const [startDate, setStartDate] = useState(task.duedate)
 
-//console.log(taskstags)
+  //form validation
+  const [inp_task_val,setInpTaskVal ] = useState(undefined)
+  const [sel_tag, setSelTag] = useState(undefined)
+  const [inp_duedate, setInpDueDate] = useState(undefined)
+
   const onSubmit = async (e)=> { //console.log(e.target.task_complete.checked)
     e.preventDefault()
+    //form validation
+    if(e.target.task.value.length === 0 ){
+      setInpTaskVal(false)
+    }else{
+      setInpTaskVal(true)
+    }
+    if(e.target.tag.length === undefined && e.target.tag.value === ''){
+      setSelTag(false)
+    }else{
+      setSelTag(true)
+    }
+    if(e.target.duedate.length === undefined && e.target.duedate.value === ''){
+      setInpDueDate(false)
+    }else{
+      setInpDueDate(true)
+    }
+
+    if(e.target.task.value.length === 0 || (e.target.tag.length === undefined  && e.target.tag.value === '')|| (e.target.duedate.length === undefined && e.target.duedate.value === '')){
+      return
+    }
+    //form validation
     let _tags =[]
     if(e.target.tag.length !== undefined){
       for(var i = 0 ; i < e.target.tag.length; i++){
@@ -22,25 +51,8 @@ const EditTask = ({clearDataCallback, task, tags, taskstags, reload}) => {
       _tags = [e.target.tag.value]
     }
 
-    //console.log(e.target.tag, e.target.task.value, e.target.note.value, e.target.duedate.value)
-    try {
-      const resp = await fetch(`${base_url()}/task/updateTaskDetail?task_id=${task.task_id}`, {
-        method: 'PUT',
-        headers:{
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({task_title:e.target.task.value, note: e.target.note.value, duedate: e.target.duedate.value, tags: _tags, completed: e.target.task_complete.checked?1:0})
-      })
-
-      const resp_data = await resp.json()
-      //console.log(resp_data)
-      clearDataCallback()
-      reload()
-      toast.success("Task Updated!",{position: "top-center", duration: 1000, style: {background: '#333', color: '#fff'}})
-
-    }catch(err) {
-      console.log(err)
-    }
+    dispatch(updateTaskDetail({task_id: task.task_id, task_title:e.target.task.value, note: e.target.note.value, duedate: e.target.duedate.value, tags: _tags, completed: e.target.task_complete.checked?1:0}))
+    clearDataCallback()
   }
 
   const _tags = tags.map(m=>({...m, value:m.tag_id, label: m.tag}))
@@ -52,15 +64,19 @@ const EditTask = ({clearDataCallback, task, tags, taskstags, reload}) => {
         <div className='p-1 bg-gray-300 font-thin text-sm border-l-4 border-l-green-500 ml-2 mb-2 col-span-8 '>Select one or more tags from below:</div>
 
         <Select className='col-span-8' defaultValue={selectedOption} onChange={setSelectedOption} options={_tags} isMulti={true} placeholder='Select one or more tags' name='tag' />
+        {sel_tag === false ? <span className='text-sm text-red-500 col-span-8'>*Tag is required</span>:null}
+
 
         <input type='text' id='task' placeholder='Task'  className='bg-white rounded-md  col-span-8 p-2' defaultValue={task.task_title}  />
+        {inp_task_val === false ? <span className='text-sm text-red-500 col-span-8'>*Task is required</span>:null}
           
         <textarea id='note' className='col-span-8 bg-gray-100 p-1' placeholder='Note' defaultValue={task.note}></textarea>
 
         <div className='col-span-8'>
           <div className='flex flex-row justify-center gap-2'>
             <div className='mt-1'>Due Date</div>
-            <DatePicker selected={startDate} onChange={(date)=> setStartDate(date)} minDate={new Date()} maxDate={dayjs().add(1,'year')}  className=' bg-gray-100 p-1' id='duedate'/>
+            <DatePicker selected={startDate} onChange={(date)=> {setStartDate(date);setInpDueDate(true);}} minDate={new Date()} maxDate={dayjs().add(1,'year')}  className=' bg-gray-100 p-1' id='duedate'/>
+            {inp_duedate === false ? <span className='text-sm text-red-500 col-span-6'>*Date is required</span>:null}
             <input type='checkbox' id='task_complete' value='1' className='h-6 w-6 mt-1.5'  defaultChecked={task.completed?'checked':null} />
             <label htmlFor='task_complete' className='p-1 mt-1 text-sm'>Complete</label>
           </div>
