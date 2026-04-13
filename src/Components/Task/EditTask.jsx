@@ -3,16 +3,31 @@ import { Modal } from '../Utils/Modal';
 import Select from 'react-select';
 import {  useState } from 'react';
 import dayjs from 'dayjs';
-import { useDispatch, useSelector } from 'react-redux';
-import { updateTaskDetail } from '../../reducers/taskSlice';
+// import { useDispatch, useSelector } from 'react-redux';
+//import { updateTaskDetail } from '../../reducers/taskSlice';
+import { useGetTagsQuery } from '../../api/tagApi';
+import {  useGetTasksQuery, useGetTasksTagsQuery, useUpdateTaskMutation } from '../../api/taskApi';
+import toast from "react-hot-toast"
 
 const EditTask = ({clearDataCallback, task}) => {
-  const taskstags = useSelector( (state) => state.taskstags.data)
-  const tags = useSelector((state) => state.tags.data)
-  const dispatch = useDispatch()
+  // const taskstags = useSelector( (state) => state.taskstags.data)
+  // const tags = useSelector((state) => state.tags.data)
+  // const dispatch = useDispatch()
+  //rtk query
+  const {data: tags, isLoading, isSuccess, isError} = useGetTagsQuery()
+  const {data: taskstags, isLoading: isLoadingTasksTags} = useGetTasksTagsQuery()
+  //const {data: _task } = useGetTaskQuery(task.task_id)
+  const [updateTask] = useUpdateTaskMutation()
+  const {refetch} = useGetTasksTagsQuery()
+  const {refetch: refetchTasks} = useGetTasksQuery()
 
-  const [selectedOption, setSelectedOption] = useState(taskstags.filter(f=> f.task_id === task.task_id).map(m=>({...m, value:m.tag_id, label: m.tag})))
+
+  const [selectedOption, setSelectedOption] = useState(taskstags?.filter(f=> f.task_id === task.task_id).map(m=>({...m, value:m.tag_id, label: m.tag})))
+  const _tags = tags?.map(m=>({...m, value:m.tag_id, label: m.tag}))
+
   const [startDate, setStartDate] = useState(task.duedate)
+
+
 
   //form validation
   const [inp_task_val,setInpTaskVal ] = useState(undefined)
@@ -51,11 +66,24 @@ const EditTask = ({clearDataCallback, task}) => {
       _tags = [e.target.tag.value]
     }
 
-    dispatch(updateTaskDetail({task_id: task.task_id, task_title:e.target.task.value, note: e.target.note.value, duedate: e.target.duedate.value, tags: _tags, completed: e.target.task_complete.checked?1:0}))
+    
+    //dispatch(updateTaskDetail({task_id: task.task_id, task_title:e.target.task.value, note: e.target.note.value, duedate: e.target.duedate.value, tags: _tags, completed: e.target.task_complete.checked?1:0}))
+
+    await updateTask({task_id: task.task_id, task_title:e.target.task.value, note: e.target.note.value, duedate: e.target.duedate.value, tags: _tags, completed: e.target.task_complete.checked?1:0}).unwrap()
+    //console.log(isLoadingDelete)
+    toast.success("Task Updated!",{position: "top-center", duration: 1000, style: {background: '#333', color: '#fff'}})
+
     clearDataCallback()
+    refetch()
+    refetchTasks()
   }
 
-  const _tags = tags.map(m=>({...m, value:m.tag_id, label: m.tag}))
+
+    if(isLoading && isLoadingTasksTags){
+    return (<div>Loading...</div>)
+  }
+
+
 
   return (
     <Modal clearDataCallback={clearDataCallback} title={"Edit Task"}>

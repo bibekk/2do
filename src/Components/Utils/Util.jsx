@@ -1,6 +1,6 @@
 //export const base_url='http://192.168.1.246:8080'
 
-export const base_url = () => {
+export const base_url = () => { //console.log(window.location.hostname);
   return `http://${window.location.hostname}:8088`
 }
 

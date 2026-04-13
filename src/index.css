@@ -31,8 +31,13 @@ button{
 }
 
 .task-tag{
-  @apply w-auto border-1 mt-1 shadow-sm border-gray-400 text-xs bg-gray-300 p-0.5 ml-1 rounded-sm
+  @apply w-auto border-1 mt-1  border-gray-400 text-xs bg-emerald-100 p-0.5 ml-1 rounded-sm
 }
+
+.task-note{
+  @apply bg-yellow-50 p-1 text-sm mt-1 border-1 border-gray-300 border-l-8 border-l-blue-200 border-r-8 border-r-blue-200
+}
+
 
 .tag{
   @apply border-2 border-gray-500 rounded-md p-1 shadow bg-gray-300 font-thin text-sm
@@ -52,8 +57,9 @@ button{
 }
 
 .message_notfound{
-  @apply p-1 bg-red-100 rounded-md font-thin text-sm mt-2 border-l-red-400 border-8 border-t-0 border-r-0 border-b-0
+  @apply p-1 bg-red-100 rounded-md font-thin text-sm mt-2 border-l-red-300 border-8 border-t-0 border-r-0 border-b-0
 }
+
 
 /* for react-calendar */
 
@@ -87,7 +93,7 @@ button{
 }
 
 .react-calendar__tile{
-  @apply bg-gray-200!  border-1! border-gray-400! 
+  @apply bg-gray-200!  border-1! border-gray-400! p-1!
 }
 
 /* .react-calendar__month-view__days{

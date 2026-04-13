@@ -2,8 +2,9 @@ import { useState } from 'react'
 import { Modal } from '../Utils/Modal'
 import 'react-datepicker/dist/react-datepicker.css'
 import { useDispatch } from 'react-redux'
-import { addTag } from '../../reducers/tagSlice'
-
+import { useAddTagMutation } from '../../api/tagApi'
+import toast from 'react-hot-toast'
+//import { addTag } from '../../reducers/tagSlice'
 
 export default function AddTag({clearDataCallback}) {
   const [tag, setTag] = useState(null)
@@ -11,6 +12,9 @@ export default function AddTag({clearDataCallback}) {
 
   //form validation
   const [inp_tag, setInpTag] = useState(undefined)
+
+  //rtk
+  const [addTag] = useAddTagMutation()
 
   const onSubmit = async(e)=>{
     e.preventDefault()
@@ -22,7 +26,9 @@ export default function AddTag({clearDataCallback}) {
     if(e.target.tag.length === undefined && e.target.tag.value === ''){
       return
     }
-    dispatch(addTag({tag: e.target.tag.value, note: e.target.note.value}))
+    //dispatch(addTag({tag: e.target.tag.value, note: e.target.note.value}))
+    await addTag({tag: e.target.tag.value, note: e.target.note.value}).unwrap()
+    toast.success("New Tag Added!",{position: "top-center", duration: 1000, style: {background: '#333', color: '#fff'}})
     clearDataCallback()
   }
 

@@ -4,8 +4,11 @@ import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
 import Select from 'react-select'
 import dayjs from 'dayjs'
-import { useDispatch, useSelector } from 'react-redux'
-import { addTask } from '../../reducers/taskSlice'
+// import { useDispatch } from 'react-redux'
+// import { addTask } from '../../reducers/taskSlice'
+import { useAddTaskMutation, useGetTasksQuery, useGetTasksTagsQuery } from '../../api/taskApi'
+import { useGetTagsQuery } from '../../api/tagApi'
+import toast from 'react-hot-toast'
 
 
 export default function AddTask({clearDataCallback, _duedate}) {
@@ -14,15 +17,27 @@ export default function AddTask({clearDataCallback, _duedate}) {
   const [startDate, setStartDate] = useState(_duedate)
   const [selectedOption, setSelectedOption] = useState(null)
 
-  const dispatch = useDispatch()
-  const tags = useSelector((state)=> state.tags.data)
+  // const dispatch = useDispatch()
+  //const tags = useSelector((state)=> state.tags.data)
   //console.log(_duedate)
 
+  //rtk query
+  const [ addTask, {}] = useAddTaskMutation()
+  const {data: tags, isLoading: isLoadingTags, isSuccess, isError} = useGetTagsQuery()
+  const {refetch} = useGetTasksQuery()
+  const {refetch: refetchTaskTags} = useGetTasksTagsQuery()
+  //const {data: tasks, isLoading: isLoadingTasks} = useGetTasksQuery()
   //form validation
   const [inp_task_val,setInpTaskVal ] = useState(undefined)
   const [sel_tag, setSelTag] = useState(undefined)
   const [inp_duedate, setInpDueDate] = useState(undefined)
 
+  if(isLoadingTags){
+    return (<div>Loading...</div>)
+  }
+  if(isError){
+    return(<div>Something went wrong!</div>)
+  }
   
   const onSubmit = async(e)=>{
     e.preventDefault()
@@ -57,7 +72,14 @@ export default function AddTask({clearDataCallback, _duedate}) {
       _tags = [e.target.tag.value]
     }
 
-  dispatch(addTask({task_title: e.target.task.value,duedate: e.target.duedate.value, note: e.target.note.value, tags: _tags}))
+  //dispatch(addTask({task_title: e.target.task.value,duedate: e.target.duedate.value, note: e.target.note.value, tags: _tags}))
+  //console.log(e.target.task.value, e.target.duedate.value, e.target.note.value, _tags)
+  //return
+    await addTask({task_title: e.target.task.value,duedate: e.target.duedate.value, note: e.target.note.value, tags: _tags}).unwrap()
+    toast.success("New Task Added!",{position: "top-center", duration: 1000, style: {background: '#333', color: '#fff'}})
+
+    refetch()
+    refetchTaskTags()
   clearDataCallback()
   }
 

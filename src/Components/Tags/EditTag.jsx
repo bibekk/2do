@@ -1,10 +1,13 @@
-import { useDispatch } from 'react-redux';
+// import { useDispatch } from 'react-redux';
 import { Modal } from '../Utils/Modal';
-import {  updateTag } from '../../reducers/tagSlice';
+// import {  updateTag } from '../../reducers/tagSlice';
 import { useState } from 'react';
+import { useUpdateTagMutation } from '../../api/tagApi';
+import toast from 'react-hot-toast';
 
 const EditTag = ({clearDataCallback, tag}) => {
-  const dispatch = useDispatch()
+  // const dispatch = useDispatch()
+  const [updateTag] = useUpdateTagMutation()
   //form validation
   const [inp_tag, setInpTag] = useState(undefined)
 
@@ -20,7 +23,10 @@ const EditTag = ({clearDataCallback, tag}) => {
       return
     }
     //form validation
-    dispatch(updateTag({tag_id: tag.tag_id, tag: e.target.tag.value, note: e.target.note.value}))
+    const output = await updateTag({tag_id: tag.tag_id, tag: e.target.tag.value, note: e.target.note.value}).unwrap()
+    if(output === true){
+      toast.success("Tag Updated!",{position: "top-center", duration: 1000, style: {background: '#333', color: '#fff'}})
+    }
     clearDataCallback()
   }
 

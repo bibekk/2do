@@ -4,8 +4,8 @@ import { FaCircleCheck } from "react-icons/fa6"
 import { MdDelete } from "react-icons/md"
 import Paging from "../Utils/Paging"
 import _ from 'lodash'
-import { useDispatch, useSelector } from "react-redux"
-import { completeTask, deleteTask } from "../../reducers/taskSlice"
+import { useCompleteTaskMutation, useDeleteTaskMutation, useGetTasksTagsQuery } from "../../api/taskApi"
+import toast from "react-hot-toast"
 
 export const AllTasks = ({ setShowEditTask}) => { 
   const [showTag, setShowTag] =useState(false)
@@ -17,12 +17,11 @@ export const AllTasks = ({ setShowEditTask}) => {
   const PERPAGE = 15
   const [perPage, setPerPage] = useState(PERPAGE)
   const [paging, setPaging] = useState({ top: perPage, skip: 0, currentPage: 1 })
+  //rtk query
+  const {data: taskstags, isLoading: isLoadingTasksTags} = useGetTasksTagsQuery()
+  const [completeTask] = useCompleteTaskMutation()
+  const [deleteTask] = useDeleteTaskMutation()
 
-  //redux
-  const dispatch = useDispatch()
-  // const tasks = useSelector((state) => state.tasktags.tasks)
-  const taskstags = useSelector((state) => state.taskstags.data)
-  
   //#region paging
   const nextPage = () => {
     let _currentPage = Number(paging.currentPage) + 1
@@ -39,6 +38,23 @@ export const AllTasks = ({ setShowEditTask}) => {
     setPaging((prevState) => ({ ...prevState, currentPage: _currentPage }))
   }
 //#endregion paging
+
+  const handleDeleteTask = async(id) =>{
+    try{
+      const output = await deleteTask(id).unwrap()
+      
+      //console.log(isLoadingDelete)
+      if(output === true){
+        toast.success("Task removed!",{position: "top-center", duration: 1000, style: {background: '#333', color: '#fff'}})
+      }else{
+        toast.error(output)
+      }
+      
+    }catch{
+      console.log('Error')
+      toast.error("Error deleting!")
+    }
+  }
 
   let _tasks = _.uniqBy(taskstags,'task_id')
 
@@ -77,22 +93,23 @@ export const AllTasks = ({ setShowEditTask}) => {
     if(_chunkData.length > 0 ){
     _data = _chunkData[_currentPage - 1 ].map((m, index) => {
       return(
-        <div className={`bg-gray-200 p-0.5 shadow font-thin text-xs   ${m.completed === 1 ?'bg-green-100!':null}`} key={m.task_id}>
+        <div className={`bg-gray-200 p-0.5 font-thin text-xs   ${m.completed === 1 ?'bg-green-100!':null}`} key={m.task_id}>
           <div className='flex justify-between'>               
             <span  className='flex flex-grow'>
-              {m.completed === 1? <FaCircleCheck className=' mr-2 mt-1 text-green-500 hover:text-blue-500 hover:cursor-pointer' onClick={()=>dispatch(completeTask({stat:m.completed,tid: m.task_id}))}/>:<FaCircle className='float-left mr-2 mt-1 text-white hover: cursor-pointer hover:text-blue-500' onClick={()=>completeTask(m.completed, m.task_id)} />}
+              {m.completed === 1? <FaCircleCheck className=' mr-2 mt-1 text-lg text-green-500 hover:text-blue-500 hover:cursor-pointer' onClick={()=>completeTask({task_id: m.task_id, status:m.completed})}/>:<FaCircle className='float-left text-lg mr-2 mt-1 text-white hover: cursor-pointer hover:text-blue-500' onClick={()=>completeTask(m.completed, m.task_id)} />}
               <span className={m.completed?'line-through italic p-1':'font-normal'}>{m.task_title}</span>
             </span>
+            {m.note ? <div className="bg-slate-50 p-0.5 rounded-sm">{m.note}</div>:null}
             <div className='text-xs p-1 content-center ml-2 mr-2'>{m.duedate}</div>
             <div className='flex gap-1 mt-1'>
               <FaEdit className='text-gray-600 hover:text-gray-900 hover:cursor-pointer' onClick={()=>setShowEditTask({show: true, task: m})} />
-              <MdDelete className='text-red-400 hover:text-red-700 hover:cursor-pointer' onClick={()=>{if(window.confirm('Are you sure you want to delete?')) {dispatch(deleteTask(m.task_id))}}}/>
+              <MdDelete className='text-red-400 hover:text-red-700 hover:cursor-pointer' onClick={()=>{if(window.confirm('Are you sure you want to delete?')) { handleDeleteTask(m.task_id)}}}/>
               {/* <MdPushPin className='text-blue-500 hover:cursor-pointer hover:text-blue-600'/> */}
             </div>
           </div>
 
           {showTag &&
-            <div className='flex mt-2 border-t-gray-300 border-1 border-b-0 border-l-0 border-r-0 pt-1 flex-wrap'>
+            <div className='flex mt-2 border-t-gray-300 border-1 border-b-0 border-l-0 border-r-0 pt-1 flex-wrap mb-0.5'>
             {taskstags.filter(f=> f.task_id ===m.task_id).map(item => <div key={item.tag_id} className='task-tag'>{item.tag}</div>)}
             </div>
           }
@@ -105,7 +122,7 @@ export const AllTasks = ({ setShowEditTask}) => {
 
   return (
     <div className="grid grid-cols-8 gap-0 overflow-auto max-h-[80%] h-[800px]">
-      <div className='col-span-8 sm:col-span-6 order-2 p-1 bg-gray-400 rounded-lg w-full'>
+      <div className='col-span-8 sm:col-span-6  order-2 p-1 bg-gray-400 rounded-lg w-full'>
         <div className="flex gap-2 bg-gray-100 rounded-md  p-0.5">
           <div className='font-bold rounded-md text-sm w-fit p-1 ml-3'>{_tasks.length} {_tasks.length > 1 ?'tasks':'task'}</div>
           <input type='checkbox' id='show_tag' value='Show Tag' className='h-4 w-4 mt-1.5' onClick={()=>setShowTag(!showTag)}/>
@@ -143,8 +160,8 @@ export const AllTasks = ({ setShowEditTask}) => {
         </div>
 
         {_tasks.length > 0 &&
-          <div className='flex flex-col gap-2'>
-            <div className='space-y-1 bg-gray-500 rounded-md p-2 max-w-lg'>
+          <div className='flex flex-col'>
+            <div className='space-y-0.5 bg-gray-500 rounded-md p-1 '>
               {_data}
             </div>
           </div>
@@ -155,7 +172,7 @@ export const AllTasks = ({ setShowEditTask}) => {
         }
       </div>
 
-      <div className="col-span-8   sm:col-span-2 order-1 text-sm">
+      <div className="col-span-8  sm:col-span-2 order-1 text-sm">
         <div className="bg-gray-300 mt-1 rounded-md p-1">
 
           {/* <div  className={`hover:text-blue-500 hover:cursor-pointer bg-gray-400 m-0.5 rounded-md p-1 ${selectedTagID === null?'text-blue-300 bg-gray-500':null}`}>
